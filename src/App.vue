@@ -2,7 +2,7 @@
     <v-app>
         <v-main>
             <Header/>
-            <div class="px-4 ">
+            <div class="px-4 bgc-light-primary" style="min-height: calc(100vh - 56px)">
                 <router-view></router-view>
             </div>
         </v-main>
