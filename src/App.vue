@@ -1,8 +1,8 @@
 <template>
-    <v-app>
+    <v-app :theme="theme">
+        <Header/>
         <v-main>
-            <Header/>
-            <div class="px-4 bgc-light-primary" style="min-height: calc(100vh - 56px)">
+            <div class="px-4 bg-light-primary" style="min-height: calc(100vh - 48px)">
                 <router-view></router-view>
             </div>
         </v-main>
@@ -11,5 +11,8 @@
 
 <script setup lang="ts">
 import Header from './components/Header.vue';
+import {ref} from "vue";
+
+const theme = ref("lightTheme");
 </script>
 
