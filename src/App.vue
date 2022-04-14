@@ -1,5 +1,5 @@
 <template>
-    <v-app :theme="theme">
+    <v-app :theme="theme.currentTheme">
         <Header/>
         <v-main>
             <div class="px-4 bg-light-primary" style="min-height: calc(100vh - 48px)">
@@ -12,7 +12,8 @@
 <script setup lang="ts">
 import Header from './components/Header.vue';
 import {ref} from "vue";
+import {useCustomTheme} from "./store/theme";
 
-const theme = ref("lightTheme");
+const theme = useCustomTheme();
 </script>
 
