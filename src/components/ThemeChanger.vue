@@ -1,21 +1,23 @@
 <template>
     <v-icon
-        @click="handleChange()"
-        :icon="check? 'mdi-white-balance-sunny' : 'mdi-weather-night'"
+        @click="theme.toggleTheme()"
+        :icon="bool ? 'mdi-white-balance-sunny' : 'mdi-weather-night'"
         v-ripple
         size="large"
         class="round-btn"
-        :class="check ? 'day': 'night'"
+        :class="bool ? 'day': 'night'"
     ></v-icon>
 </template>
 
 <script setup lang="ts">
-import {ref} from "vue";
+import {computed} from "vue";
+import {useCustomTheme} from "../store/theme";
 
-const check = ref(true);
-const handleChange = () => {
-    check.value = !check.value;
-}
+const theme = useCustomTheme();
+const bool = computed(() => {
+    return theme.currentTheme == "lightTheme"
+})
+
 </script>
 
 <style scoped lang="scss">
