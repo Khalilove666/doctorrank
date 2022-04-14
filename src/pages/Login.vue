@@ -10,33 +10,33 @@
             ></v-progress-linear>
             <div>
                 <h3>Login</h3>
-                <v-text-field v-model="username" class="mt-4" label="Username or email" variant="outlined"
+                <v-text-field v-model="username" class="mt-4" color="accent" label="Username or email" variant="outlined"
                               density="compact" hide-details></v-text-field>
-                <v-text-field v-model="password" class="mt-4" label="Password" type="password" variant="outlined"
+                <v-text-field v-model="password" class="mt-4" color="accent" label="Password" type="password" variant="outlined"
                               density="compact" hide-details></v-text-field>
                 <div class="d-flex justify-end">
-                    <router-link to="/register" class="mt-1 text-decoration-underline">şifrəmi unutdum</router-link>
+                    <router-link to="/register" class="mt-1 text-decoration-underline text-accent">şifrəmi unutdum</router-link>
                 </div>
-                <v-btn @click="handleLogin()" :disabled="loading" class="mt-4 bgc-dark-primary color-text" block>DAXİL OL</v-btn>
+                <v-btn @click="handleLogin()" :disabled="loading" class="mt-4 bg-accent text-white-text" block>DAXİL OL</v-btn>
                 <p class="mt-4">Digər daxil olma seçimləri</p>
                 <v-divider></v-divider>
                 <div class="mt-4 d-flex justify-space-between">
                     <v-btn
                         icon="mdi-google"
                         variant="outlined"
-                        class="color-primary"
+                        class="text-primary"
                         size="small"
                     ></v-btn>
                     <v-btn
                         icon="mdi-facebook"
                         variant="outlined"
-                        class="color-primary"
+                        class="text-primary"
                         size="small"
                     ></v-btn>
                     <v-btn
                         icon="mdi-twitter"
                         variant="outlined"
-                        class="color-primary"
+                        class="text-primary"
                         size="small"
                     ></v-btn>
                 </div>
@@ -48,9 +48,9 @@
 <script setup lang="ts">
 import {ref} from "vue";
 
-let username = ref("");
-let password = ref("");
-let loading = ref(false);
+const username = ref("");
+const password = ref("");
+const loading = ref(false);
 
 const handleLogin = () => {
     loading.value = true;

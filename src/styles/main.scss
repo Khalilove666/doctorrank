@@ -1,60 +1,14 @@
 @import "variables.scss";
-// COLORS
-.color-primary {
-    color: $color-primary;
-}
-.color-dark-primary {
-    color: $color-dark-primary;
-}
-.color-primary-text {
-    color: $color-primary-text;
-}
-.color-light-primary {
-    color: $color-light-primary;
-}
-.color-accent {
-    color: $color-accent;
-}
-.color-text {
-    color: $color-text;
-}
-.color-secondary-text {
-    color: $color-secondary-text;
-}
-.color-divider {
-    color: $color-divider;
-}
-// BACKGROUND COLORS
-.bgc-primary {
-    background-color: $color-primary;
-}
-.bgc-dark-primary {
-    background-color: $color-dark-primary;
-}
-.bgc-primary-text {
-    background-color: $color-primary-text;
-}
-.bgc-light-primary {
-    background-color: $color-light-primary;
-}
-.bgc-accent {
-    background-color: $color-accent;
-}
-.bgc-text {
-    background-color: $color-text;
-}
-.bgc-secondary-text {
-    background-color: $color-secondary-text;
-}
-.bgc-divider {
-    background-color: $color-divider;
-}
-// -------------------OTHERS-------------------
+// -------------------Helper classes-------------------
 .full-height {
     height: 100%;
 }
 .full-width {
     width: 100%;
+}
+.round-btn {
+    padding: 20px;
+    border-radius: 100%;
 }
 
 
