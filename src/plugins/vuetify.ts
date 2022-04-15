@@ -54,6 +54,7 @@ export default createVuetify({
                     'text': "#000000",
                     'secondary-text': "#757575",
                     'divider': "#BDBDBD",
+                    'error': "#B00020",
                 }
             },
             darkTheme: {
@@ -68,6 +69,7 @@ export default createVuetify({
                     'text': "#FFFFFF",
                     'secondary-text': "#757575",
                     'divider': "#BDBDBD",
+                    'error': "#B00020",
 
                     // background: '#FFFFFF',
                     // surface: '#FFFFFF',
