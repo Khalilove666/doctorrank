@@ -1,6 +1,6 @@
 <template>
     <div>
-        <v-app-bar density="compact" color="primary" priority="0" >
+        <v-app-bar density="compact" color="primary" priority="0">
             <div class="full-width d-flex align-center">
                 <v-row>
                     <v-col v-if="mobile" cols="3">
@@ -10,9 +10,13 @@
                     </v-col>
                     <v-col v-else cols="4">
                         <div class="d-flex align-center full-height">
-                            <router-link to="/doctors" class="text-white-text text-decoration-none mr-4">Həkimlər
+                            <router-link to="/doctors" class="text-white-text text-decoration-none mr-4">
+                                {{ $t('doctors') }}
                             </router-link>
-                            <router-link to="/about" class="text-white-text text-decoration-none">Haqqında</router-link>
+                            <router-link to="/about" class="text-white-text text-decoration-none">{{
+                                    $t('about')
+                                }}
+                            </router-link>
                         </div>
                     </v-col>
                     <v-col :cols="mobile ? 6 : 4">
@@ -24,7 +28,7 @@
                     <v-col v-if="!mobile" cols="4">
                         <div class="d-flex justify-end align-center full-height">
                             <ThemeChanger/>
-                            <Language/>
+                            <Language :white-text="true"/>
                             <v-avatar v-if="loggedIn" v-ripple @click="">
                                 <v-img
                                     :src="evelyn"
@@ -32,9 +36,11 @@
                                 ></v-img>
                             </v-avatar>
                             <template v-else>
-                                <router-link to="/login" class="text-white-text text-decoration-none ml-4">Daxil ol
+                                <router-link to="/login" class="text-white-text text-decoration-none ml-4">
+                                    {{ $t('login') }}
                                 </router-link>
-                                <router-link to="/register" class="text-white-text text-decoration-none ml-4">Qeydiyyat
+                                <router-link to="/register" class="text-white-text text-decoration-none ml-4">
+                                    {{ $t('register') }}
                                 </router-link>
                             </template>
                         </div>
@@ -68,7 +74,7 @@
                         <v-list-item-avatar>
                             <v-icon icon="mdi-login"></v-icon>
                         </v-list-item-avatar>
-                        <v-list-item-title>Daxil ol</v-list-item-title>
+                        <v-list-item-title>{{ $t('login') }}</v-list-item-title>
                     </v-list-item>
                 </router-link>
                 <router-link to="/register" class=" text-decoration-none text-text">
@@ -76,7 +82,7 @@
                         <v-list-item-avatar>
                             <v-icon icon="mdi-account-plus-outline"></v-icon>
                         </v-list-item-avatar>
-                        <v-list-item-title>Qeydiyyat</v-list-item-title>
+                        <v-list-item-title>{{ $t('register') }}</v-list-item-title>
                     </v-list-item>
                 </router-link>
             </v-list>
@@ -87,7 +93,7 @@
                         <v-list-item-avatar>
                             <v-icon icon="mdi-doctor"></v-icon>
                         </v-list-item-avatar>
-                        <v-list-item-title>Həkimlər</v-list-item-title>
+                        <v-list-item-title>{{ $t('doctors') }}</v-list-item-title>
                     </v-list-item>
                 </router-link>
                 <router-link to="/about" class="text-decoration-none text-text">
@@ -95,17 +101,14 @@
                         <v-list-item-avatar>
                             <v-icon icon="mdi-information-variant"></v-icon>
                         </v-list-item-avatar>
-                        <v-list-item-title>Haqqında</v-list-item-title>
+                        <v-list-item-title>{{ $t('about') }}</v-list-item-title>
                     </v-list-item>
                 </router-link>
             </v-list>
             <v-divider></v-divider>
             <v-list density="compact">
                 <v-list-item>
-                    <v-list-item-avatar>
-                        <v-icon icon="mdi-translate"></v-icon>
-                    </v-list-item-avatar>
-                    <v-list-item-title>AZ</v-list-item-title>
+                    <Language full-width="true"/>
                 </v-list-item>
             </v-list>
         </v-navigation-drawer>

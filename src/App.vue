@@ -12,8 +12,8 @@
 <script setup lang="ts">
 import Header from './components/Header.vue';
 import {ref} from "vue";
-import {useCustomTheme} from "./store/theme";
+import {useThemeAndLang} from "./store/theme";
 
-const theme = useCustomTheme();
+const theme = useThemeAndLang();
 </script>
 

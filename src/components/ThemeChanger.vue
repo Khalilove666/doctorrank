@@ -11,9 +11,9 @@
 
 <script setup lang="ts">
 import {computed} from "vue";
-import {useCustomTheme} from "../store/theme";
+import {useThemeAndLang} from "../store/theme";
 
-const theme = useCustomTheme();
+const theme = useThemeAndLang();
 const bool = computed(() => {
     return theme.currentTheme == "lightTheme"
 })
@@ -25,6 +25,7 @@ const bool = computed(() => {
     transform: rotate(0deg);
     transition: transform 300ms;
 }
+
 .night {
     transform: rotate(360deg);
     transition: transform 300ms;

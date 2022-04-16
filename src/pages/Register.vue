@@ -9,14 +9,14 @@
                 indeterminate
             ></v-progress-linear>
             <div>
-                <h3>Qeydiyyat</h3>
+                <h3>{{ $t('register') }}</h3>
                 <Error class="mt-4" text="Username already taken"/>
                 <v-text-field
                     v-model="firstName"
                     type="text"
                     class="mt-4"
                     color="accent"
-                    label="Ad"
+                    :label="$t('first_name')"
                     variant="outlined"
                     density="compact"
                     hide-details
@@ -26,7 +26,7 @@
                     type="text"
                     class="mt-4"
                     color="accent"
-                    label="Soyad"
+                    :label="$t('last_name')"
                     variant="outlined"
                     density="compact"
                     hide-details
@@ -35,7 +35,7 @@
                     v-model="email"
                     class="mt-4"
                     color="accent"
-                    label="Email"
+                    :label="$t('email')"
                     variant="outlined"
                     density="compact"
                     hide-details
@@ -44,7 +44,7 @@
                     v-model="username"
                     class="mt-4"
                     color="accent"
-                    label="İstifadəçi adı seçin"
+                    :label="$t('select_username')"
                     variant="outlined"
                     density="compact"
                     hide-details
@@ -53,7 +53,7 @@
                     v-model="password"
                     class="mt-4"
                     color="accent"
-                    label="Şifrə"
+                    :label="$t('password')"
                     type="password"
                     variant="outlined"
                     density="compact"
@@ -63,7 +63,7 @@
                     v-model="passwordConfirm"
                     class="mt-4"
                     color="accent"
-                    label="Şifrə təkrar"
+                    :label="$t('password_confirm')"
                     type="password"
                     variant="outlined"
                     density="compact"
@@ -72,9 +72,9 @@
                 <div class="d-flex justify-end">
                 </div>
                 <v-btn @click="handleRegister()" :disabled="loading" class="mt-4 bg-accent text-white-text" block>
-                    QEYDİYYAT
+                    {{ $t('btn_register') }}
                 </v-btn>
-                <p class="mt-4">Digər qeydiyyat seçimləri</p>
+                <p class="mt-4">{{$t('register_options')}}</p>
                 <v-divider></v-divider>
                 <div class="mt-4 d-flex justify-space-between">
                     <v-btn
