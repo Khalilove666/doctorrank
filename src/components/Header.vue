@@ -24,7 +24,7 @@
                     <v-col v-if="!mobile" cols="4">
                         <div class="d-flex justify-end align-center full-height">
                             <ThemeChanger/>
-                            <a class="text-white-text">AZ</a>
+                            <Language/>
                             <v-avatar v-if="loggedIn" v-ripple @click="">
                                 <v-img
                                     :src="evelyn"
@@ -117,6 +117,7 @@ import {computed, ref} from "vue";
 import {useDisplay} from "vuetify";
 import evelyn from '../assets/img/evelyn.jpg'
 import ThemeChanger from "./ThemeChanger.vue";
+import Language from "./Language.vue";
 
 const {mobile} = useDisplay();
 const drawer = ref(false);
