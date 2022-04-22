@@ -108,7 +108,7 @@
             <v-divider></v-divider>
             <v-list density="compact">
                 <v-list-item>
-                    <Language full-width="true"/>
+                    <Language :full-width="true"/>
                 </v-list-item>
             </v-list>
         </v-navigation-drawer>

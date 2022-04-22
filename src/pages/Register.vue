@@ -10,7 +10,7 @@
             ></v-progress-linear>
             <div>
                 <h3>{{ $t('register') }}</h3>
-                <Error class="mt-4" text="Username already taken"/>
+                <Error v-if="error.exist" :text="error.text" class="mt-4"/>
                 <v-text-field
                     v-model="firstName"
                     type="text"
@@ -19,7 +19,8 @@
                     :label="$t('first_name')"
                     variant="outlined"
                     density="compact"
-                    hide-details
+                    hide-details="auto"
+                    :rules="[ruleEmpty]"
                 ></v-text-field>
                 <v-text-field
                     v-model="lastName"
@@ -29,7 +30,8 @@
                     :label="$t('last_name')"
                     variant="outlined"
                     density="compact"
-                    hide-details
+                    hide-details="auto"
+                    :rules="[ruleNumber]"
                 ></v-text-field>
                 <v-text-field
                     v-model="email"
@@ -63,7 +65,7 @@
                     v-model="passwordConfirm"
                     class="mt-4"
                     color="accent"
-                    :label="$t('password_confirm')"
+                    :label="$t('confirm_password')"
                     type="password"
                     variant="outlined"
                     density="compact"
@@ -74,7 +76,7 @@
                 <v-btn @click="handleRegister()" :disabled="loading" class="mt-4 bg-accent text-white-text" block>
                     {{ $t('btn_register') }}
                 </v-btn>
-                <p class="mt-4">{{$t('register_options')}}</p>
+                <p class="mt-4">{{ $t('register_options') }}</p>
                 <v-divider></v-divider>
                 <div class="mt-4 d-flex justify-space-between">
                     <v-btn
@@ -102,8 +104,16 @@
 </template>
 
 <script setup lang="ts">
-import {ref} from "vue";
+import {computed, reactive, ref} from "vue";
 import Error from "../components/Error.vue";
+import {register} from "../api";
+import {useRules} from "../rules";
+
+const rules = useRules();
+
+const ruleEmpty = computed((value: string) => !!value || "empty");
+const ruleNumber = computed((value) => /^[0-9]*[.]{0,1}[0-9]*$/g.test(value) || "rule_number");
+
 
 const firstName = ref("");
 const lastName = ref("");
@@ -112,9 +122,31 @@ const username = ref("");
 const password = ref("");
 const passwordConfirm = ref("");
 const loading = ref(false);
+const error = reactive({
+    exist: false,
+    text: "",
+});
 
-const handleRegister = () => {
+const handleRegister = async () => {
+    const user = {
+        first_name: firstName.value,
+        last_name: lastName.value,
+        "email": email.value,
+        "username": username.value,
+        "role": "user",
+        "password": password.value,
+    }
+    error.exist = false;
+    error.text = "";
     loading.value = true;
+    const res = await register(user);
+    if (res.ok) {
+
+    } else {
+        error.exist = true;
+        error.text = res.error;
+    }
+    loading.value = false;
 }
 </script>
 
