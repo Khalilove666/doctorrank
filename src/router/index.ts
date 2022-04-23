@@ -7,6 +7,7 @@ import Profile from '../pages/Profile.vue';
 import Doctors from '../pages/Doctors.vue';
 import DoctorPage from '../pages/DoctorPage.vue';
 import About from '../pages/About.vue';
+import {useUser} from "../store/user";
 
 const routes = [
     {
@@ -51,3 +52,11 @@ export const router = createRouter({
     routes,
 })
 
+router.beforeEach((to, from) => {
+    const user = useUser();
+    if((to.name == "login" || to.name == "register") && user.loggedIn) {
+        return {name: "home"}
+    } else if(to.name == "profile" && !user.loggedIn) {
+        return {name: "login"}
+    }
+})

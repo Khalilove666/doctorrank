@@ -3,7 +3,7 @@
         <template v-slot:activator="{ props }">
             <div
                 v-bind="props"
-                class="d-flex align-center pa-0 pr-2"
+                class="d-flex align-center pa-0 pr-2 cursor-pointer"
                 :class="{'full-width': fullWidth, 'text-white-text': whiteText }"
                 v-ripple
             >
@@ -17,7 +17,6 @@
                 :key="lang.id"
                 @click="changeLocale(lang.id)"
                 link
-
             >
                 <v-list-item-avatar>
                     <country-flag :country="lang.id" size="normal"></country-flag>
