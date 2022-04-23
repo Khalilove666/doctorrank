@@ -4,7 +4,7 @@
         :icon="bool ? 'mdi-white-balance-sunny' : 'mdi-weather-night'"
         v-ripple
         size="large"
-        class="round-btn"
+        class="round-btn cursor-pointer"
         :class="bool ? 'day': 'night'"
     ></v-icon>
 </template>

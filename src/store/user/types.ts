@@ -5,7 +5,6 @@ export type User = {
     email: string
     username: string
     role: string
-    token: string
     created_at: number
     updated_at: number
 }

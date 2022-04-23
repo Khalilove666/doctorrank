@@ -29,12 +29,14 @@
                         <div class="d-flex justify-end align-center full-height">
                             <ThemeChanger/>
                             <Language :white-text="true"/>
-                            <v-avatar v-if="loggedIn" v-ripple @click="">
-                                <v-img
-                                    :src="evelyn"
-                                    alt="Evelyn"
-                                ></v-img>
-                            </v-avatar>
+                            <router-link v-if="user.loggedIn" to="/profile" v-ripple class="cursor-pointer round-btn">
+                                <v-avatar>
+                                    <v-img
+                                        :src="evelyn"
+                                        alt="Evelyn"
+                                    ></v-img>
+                                </v-avatar>
+                            </router-link>
                             <template v-else>
                                 <router-link to="/login" class="text-white-text text-decoration-none ml-4">
                                     {{ $t('login') }}
@@ -54,31 +56,30 @@
             </div>
         </v-app-bar>
         <v-navigation-drawer v-if="mobile" v-model="drawer" temporary priority="-1">
-            <v-list v-if="loggedIn">
-                <v-list-item
-                    v-ripple
-                    :prepend-avatar="evelyn"
-                    title="Evelyn Claire"
-                    subtitle="evelynclaire@gmail.com"
+            <v-list v-if="user.loggedIn">
+                <router-link
+                    to="/profile"
+                    class="text-decoration-none text-text"
                 >
-                    <template v-slot:append>
-                        <v-list-item-avatar end>
-                            <v-btn size="small" variant="text" icon="mdi-logout"></v-btn>
-                        </v-list-item-avatar>
-                    </template>
-                </v-list-item>
+                    <v-list-item
+                        v-ripple
+                        :prepend-avatar="evelyn"
+                        title="Evelyn Claire"
+                        subtitle="evelynclaire@gmail.com"
+                    ></v-list-item>
+                </router-link>
             </v-list>
             <v-list v-else density="compact">
                 <router-link to="/login" class="text-decoration-none text-text">
-                    <v-list-item>
+                    <v-list-item v-ripple>
                         <v-list-item-avatar>
                             <v-icon icon="mdi-login"></v-icon>
                         </v-list-item-avatar>
                         <v-list-item-title>{{ $t('login') }}</v-list-item-title>
                     </v-list-item>
                 </router-link>
-                <router-link to="/register" class=" text-decoration-none text-text">
-                    <v-list-item>
+                <router-link to="/register" class="text-decoration-none text-text">
+                    <v-list-item v-ripple>
                         <v-list-item-avatar>
                             <v-icon icon="mdi-account-plus-outline"></v-icon>
                         </v-list-item-avatar>
@@ -89,7 +90,7 @@
             <v-divider></v-divider>
             <v-list density="compact">
                 <router-link to="/doctors" class="text-decoration-none text-text">
-                    <v-list-item active-class="text-accent">
+                    <v-list-item active-class="text-accent" v-ripple>
                         <v-list-item-avatar>
                             <v-icon icon="mdi-doctor"></v-icon>
                         </v-list-item-avatar>
@@ -97,7 +98,7 @@
                     </v-list-item>
                 </router-link>
                 <router-link to="/about" class="text-decoration-none text-text">
-                    <v-list-item>
+                    <v-list-item v-ripple>
                         <v-list-item-avatar>
                             <v-icon icon="mdi-information-variant"></v-icon>
                         </v-list-item-avatar>
@@ -121,10 +122,11 @@ import {useDisplay} from "vuetify";
 import evelyn from '../assets/img/evelyn.jpg'
 import ThemeChanger from "./ThemeChanger.vue";
 import Language from "./Language.vue";
+import {useUser} from "../store/user";
 
 const {mobile} = useDisplay();
 const drawer = ref(false);
-const loggedIn = ref(false);
+const user = useUser();
 
 
 </script>

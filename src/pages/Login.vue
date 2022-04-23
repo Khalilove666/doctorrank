@@ -57,7 +57,9 @@ import {reactive, ref} from "vue";
 import {login} from "../api";
 import Error from "../components/Error.vue";
 import {useUser} from "../store/user";
+import {useRouter} from "vue-router";
 
+const router = useRouter();
 const user = useUser();
 
 const username = ref("");
@@ -72,10 +74,10 @@ const handleLogin = async () => {
     error.exist = false;
     error.text = "";
     loading.value = true;
-    loading.value = true;
     const res = await login(username.value, password.value);
     if (res.ok) {
         user.setUser(res.data)
+        router.replace("/");
     } else {
         error.exist = true;
         error.text = res.error;
