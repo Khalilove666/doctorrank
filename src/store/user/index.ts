@@ -19,7 +19,7 @@ export const useUser = defineStore("user", () => {
         updated_at: 0,
     }
     // STATE
-    let userState = reactive(getStoredState("user", defaultUser));
+    let userState = ref(getStoredState("user", defaultUser));
     const tokenState = ref("");
 
     // WATCHERS
@@ -28,14 +28,16 @@ export const useUser = defineStore("user", () => {
     }, {deep: true})
 
     // GETTERS
-    const user = computed(() => userState);
-    const loggedIn = computed(() => !!userState._id);
-    const token = computed(() => tokenState);
-    const role = computed(() => userState.role);
+    const user = computed(() => userState.value);
+    const loggedIn = computed(() => !!userState.value._id);
+    const token = computed(() => tokenState.value);
+    const role = computed(() => userState.value.role);
 
     // ACTIONS
-    function setUser(user: User) {
-        userState = reactive(user);
+    function setUser(user: any) {
+        tokenState.value = user.token;
+        delete user.token;
+        userState.value = user;
     }
 
     function setToken(token: string) {
@@ -44,7 +46,7 @@ export const useUser = defineStore("user", () => {
 
     async function logOut(message: string) {
         await router.replace("/login")
-        userState = reactive(defaultUser);
+        userState.value = defaultUser;
         tokenState.value = "";
         localStorage.removeItem("user")
         // await logOut();
@@ -53,7 +55,7 @@ export const useUser = defineStore("user", () => {
     async function changeRole() {
         const res = await performRequest("/role", null, "PUT");
         if (res.ok) {
-            userState.role = "doctor";
+            userState.value.role = "doctor";
         }
     }
 
