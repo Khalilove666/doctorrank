@@ -3,11 +3,11 @@
     <div class="v-row">
         <div class="v-col-12 v-col-sm-3">
             <v-card
-                class="mx-auto cursor-pointer"
+                class="mx-auto"
                 rounded
             >
                 <v-img
-                    :src="evelyn"
+                    :src="doctor.singleDoctor?.img"
                     cover
                     height="400"
                 ></v-img>
@@ -17,7 +17,7 @@
             <div class="v-row">
                 <div class="v-col-12 v-col-sm-8">
                     <div class="d-flex flex-column">
-                        <p class="text-h3">Evelyn Claire</p>
+                        <p class="text-h3">{{ doctor.singleDoctor?.title + " " + doctor.singleDoctor?.first_name + " " + doctor.singleDoctor?.last_name }}</p>
                         <v-chip
                             color="pink"
                             label
@@ -25,7 +25,7 @@
                             class="mt-2 width-fit-content"
                         >
                             <v-icon start icon="mdi-label"></v-icon>
-                            Mama-ginekoloq
+                            {{ doctor.singleDoctor?.profession.name }}
                         </v-chip>
                         <div class="d-flex align-center">
                             <v-rating
@@ -49,19 +49,15 @@
                         :class="{'float-right': !$vuetify.display.mobile}"
                     >
                         <v-avatar left>
-                            <v-img :src="av_hsp"></v-img>
+                            <v-img :src="doctor.singleDoctor?.hospital.img"></v-img>
                         </v-avatar>
-                        Avrasiya Hospital
+                        {{ doctor.singleDoctor?.hospital.name }}
                     </v-chip>
                 </div>
             </div>
             <p class="text-h5 mt-4">Haqqında</p>
             <v-divider></v-divider>
-            <p class="mt-2">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Accusantium, dolores enim eum illo
-                impedit repellendus tempore! Accusamus animi asperiores, corporis dolorum eos, fugiat inventore, iusto
-                labore necessitatibus perspiciatis porro provident. Lorem ipsum dolor sit amet, consectetur adipisicing
-                elit. Aspernatur doloremque laborum quod sint sunt tenetur, totam vero. Aperiam, beatae blanditiis
-                consectetur consequuntur ducimus eligendi exercitationem id, nihil officia, sed sint?</p>
+            <p class="mt-2">{{ doctor.singleDoctor?.about }}</p>
         </div>
     </div>
     <p class="text-h5 mt-4">İş təcrübəsi</p>
@@ -156,18 +152,28 @@
             <p>({{ rating }})</p>
         </div>
         <v-textarea class="mt-2" color="accent" label="Rəyinizi buraya yazın" hide-details></v-textarea>
-        <v-btn class="mt-2" color="accent"  block>Göndər</v-btn>
+        <v-btn class="mt-2" color="accent" block>Göndər</v-btn>
         <v-divider class="mt-2"></v-divider>
     </div>
 
 </template>
 
 <script setup lang="ts">
-import {ref} from "vue";
+import {onMounted, ref} from "vue";
 import evelyn from "../assets/img/evelyn.jpg";
 import av_hsp from "../assets/img/av_hsp.png";
+import {useDoctors} from "../store/doctors";
+import {useRoute, useRouter} from "vue-router";
 
+const route = useRoute();
+const doctor = useDoctors();
 const rating = ref(3.5)
+
+
+onMounted(async () => {
+    await doctor.fetchDoctorById(route.params.username);
+})
+
 
 const experience = [
     {

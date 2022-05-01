@@ -10,7 +10,7 @@ export async function performRequest(url: string, body: any, method: string = "G
         const res = await fetch(BASE_URL + url, {
             method,
             headers: {"Content-Type": "application/json", "Authorization": "Bearer " + user.token},
-            body: JSON.stringify(body),
+            body: body ? JSON.stringify(body) : null,
         });
         const result = await res.json();
         if (res.ok) {
