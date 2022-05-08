@@ -17,7 +17,9 @@
             <div class="v-row">
                 <div class="v-col-12 v-col-sm-8">
                     <div class="d-flex flex-column">
-                        <p class="text-h3">{{ doctor.singleDoctor?.title + " " + doctor.singleDoctor?.first_name + " " + doctor.singleDoctor?.last_name }}</p>
+                        <p class="text-h3">{{
+                                doctor.singleDoctor?.title + " " + doctor.singleDoctor?.first_name + " " + doctor.singleDoctor?.last_name
+                            }}</p>
                         <v-chip
                             color="pink"
                             label
@@ -154,8 +156,9 @@
         <v-textarea class="mt-2" color="accent" label="Rəyinizi buraya yazın" hide-details></v-textarea>
         <v-btn class="mt-2" color="accent" block>Göndər</v-btn>
         <v-divider class="mt-2"></v-divider>
+        <CommentItem/>
+        <v-divider class="my-5"></v-divider>
     </div>
-
 </template>
 
 <script setup lang="ts">
@@ -164,6 +167,7 @@ import evelyn from "../assets/img/evelyn.jpg";
 import av_hsp from "../assets/img/av_hsp.png";
 import {useDoctors} from "../store/doctors";
 import {useRoute, useRouter} from "vue-router";
+import CommentItem from "../components/CommentItem.vue";
 
 const route = useRoute();
 const doctor = useDoctors();
