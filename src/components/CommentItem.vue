@@ -3,16 +3,16 @@
         <div class="d-flex justify-space-between">
             <div class="d-flex align-center">
                 <v-rating
-                    v-model="rating"
+                    v-model="comment.rate"
                     half-increments
                     readonly
                     color="accent"
                     size="small"
                     density="compact"
                 ></v-rating>
-                <p class="ml-2">({{ rating }})</p>
+                <p class="ml-2">({{ comment.rate }})</p>
             </div>
-            <p class="ml-2 text-grey-darken-1">12.03.2020</p>
+            <p class="ml-2 text-grey-darken-1">{{ moment.unix(comment.updated_at).format("DD.MM.YYYY") }}</p>
         </div>
         <div class="d-flex justify-space-between align-center">
             <v-btn
@@ -20,13 +20,13 @@
                 variant="text"
                 icon="mdi-thumb-up"
             ></v-btn>
-            <p>34</p>
+            <p>{{ comment.likes.filter(like => like.status).length }}</p>
             <v-btn
                 size="small"
                 variant="text"
                 icon="mdi-thumb-down"
             ></v-btn>
-            <p>2</p>
+            <p>{{ comment.likes.filter(like => !like.status).length }}</p>
         </div>
     </div>
     <div class="v-row">
@@ -35,29 +35,27 @@
                 class="pl-0"
                 v-ripple
                 :prepend-avatar="evelyn"
-                title="Evelyn Claire"
+                :title="comment.user_id"
                 subtitle="evelynclaire@gmail.com"
             ></v-list-item>
         </div>
         <div class="v-col-12 v-col-md-10">
-            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eum laboriosam laudantium nemo! Adipisci
-                deserunt dolor ea eius, eum fuga hic labore, natus odio omnis quos rem soluta unde, velit vitae!
-                Lorem ipsum dolor sit amet, consectetur adipisicing elit. Accusantium adipisci debitis doloribus ducimus
-                pariatur perferendis porro ullam voluptas. Accusamus commodi debitis dolorem dolores maxime nulla optio
-                quia repellendus similique voluptatibus?
-                Lorem ipsum dolor sit amet, consectetur adipisicing elit. Consequatur dignissimos dolore enim non omnis
-                optio quidem quos repellendus. Optio, soluta, veritatis! Animi doloribus eveniet, maiores neque nobis
-                repellat sunt? Expedita?
-            </p>
+            <p>{{ comment.text }}</p>
         </div>
     </div>
+    <v-divider></v-divider>
 </template>
 
 <script setup lang="ts">
 import evelyn from "../assets/img/evelyn.jpg";
 import {ref} from "vue";
+import {Comment} from "../store/comments/types";
+import moment from "moment";
 
-const rating = ref(4);
+
+const props = defineProps<{ comment: Comment }>()
+
+
 </script>
 
 <style scoped lang="scss">

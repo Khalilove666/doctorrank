@@ -156,8 +156,18 @@
         <v-textarea class="mt-2" color="accent" label="Rəyinizi buraya yazın" hide-details></v-textarea>
         <v-btn class="mt-2" color="accent" block>Göndər</v-btn>
         <v-divider class="mt-2"></v-divider>
-        <CommentItem/>
-        <v-divider class="my-5"></v-divider>
+        <div v-for="comment in commentStore.allComments" :key="comment._id">
+            <CommentItem :comment="comment"/>
+        </div>
+        <v-progress-linear
+            :active="commentsLoading"
+            indeterminate
+            rounded
+            color="accent accent-4"
+        ></v-progress-linear>
+        <div v-if="skip===12 && !commentStore.haveMoreToLoad" class="py-2 text-align-center">No reviews yet</div>
+        <div v-if="skip!==12 && !commentStore.haveMoreToLoad" class="py-2 text-align-center">No more reviews to load</div>
+        <v-divider class="mt-5"></v-divider>
     </div>
 </template>
 
@@ -168,16 +178,36 @@ import av_hsp from "../assets/img/av_hsp.png";
 import {useDoctors} from "../store/doctors";
 import {useRoute, useRouter} from "vue-router";
 import CommentItem from "../components/CommentItem.vue";
+import {useComments} from "../store/comments";
+import {load} from "webfontloader";
 
 const route = useRoute();
 const doctor = useDoctors();
+const commentStore = useComments();
 const rating = ref(3.5)
+const commentsLoading = ref(false);
+
+const term = ref("");
+const skip = ref(0);
 
 
 onMounted(async () => {
     await doctor.fetchDoctorById(route.params.username);
+
+    window.onscroll = async () => {
+        let bottomOfWindow = document.documentElement.scrollTop + window.innerHeight === document.documentElement.offsetHeight;
+        if (bottomOfWindow && commentStore.haveMoreToLoad) {
+            await loadComments();
+        }
+    };
 })
 
+async function loadComments() {
+    commentsLoading.value = true;
+    await commentStore.fetchAllComments(route.params.username, skip.value);
+    commentsLoading.value = false;
+    skip.value = skip.value + 12;
+}
 
 const experience = [
     {
