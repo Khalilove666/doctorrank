@@ -10,7 +10,7 @@
             ></v-progress-linear>
             <div>
                 <h3>{{ $t('register') }}</h3>
-                <Error v-if="error.exist" :text="error.text" class="mt-4"/>
+                <Error v-if="userStore.error.exist" :text="userStore.error.text" class="mt-4"/>
                 <v-form
                     ref="form"
                 >
@@ -110,10 +110,11 @@
 <script setup lang="ts">
 import {computed, onMounted, reactive, ref} from "vue";
 import Error from "../components/Error.vue";
-import {register} from "../api";
 import {useRules} from "../composables/rules";
+import {useUser} from "../store/user";
 
 const rules = useRules();
+const userStore = useUser();
 
 const ruleEmpty = computed((value: string) => !!value || "empty");
 const ruleNumber = computed((value) => /^[0-9]*[.]{0,1}[0-9]*$/g.test(value) || "rule_number");
@@ -125,32 +126,23 @@ const username = ref("");
 const password = ref("");
 const passwordConfirm = ref("");
 const loading = ref(false);
-const error = reactive({
-    exist: false,
-    text: "",
-});
+
+onMounted(() => {
+    userStore.setSuccess(false);
+    userStore.setError(false, "");
+})
 
 const handleRegister = async () => {
     const user = {
         first_name: firstName.value,
         last_name: lastName.value,
-        "email": email.value,
-        "username": username.value,
-        "role": "user",
-        "password": password.value,
+        email: email.value,
+        username: username.value,
+        password: password.value,
     }
-    error.exist = false;
-    error.text = "";
     loading.value = true;
-    const res = await register(user);
-    if (res.ok) {
-
-    } else {
-        error.exist = true;
-        error.text = res.error;
-    }
+    await userStore.register(user);
     loading.value = false;
-
 }
 </script>
 

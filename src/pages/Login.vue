@@ -10,14 +10,20 @@
             ></v-progress-linear>
             <div>
                 <h3>{{ $t('login') }}</h3>
-                <Error v-if="error.exist" :text="error.text" class="mt-4"/>
+                <Error v-if="userStore.error.exist" :text="userStore.error.text" class="mt-4"/>
                 <v-text-field v-model="username" class="mt-4" color="accent" :label="$t('username_or_email')"
                               variant="outlined"
                               density="compact" hide-details></v-text-field>
                 <v-text-field v-model="password" class="mt-4" color="accent" :label="$t('password')" type="password"
                               variant="outlined"
                               density="compact" hide-details></v-text-field>
-                <div class="d-flex justify-end">
+                <div class="d-flex justify-space-between align-center">
+                    <v-checkbox
+                        v-model="rememberMe"
+                        label="remember me"
+                        color="accent"
+                        hide-details
+                    ></v-checkbox>
                     <router-link to="/register" class="mt-1 text-decoration-underline text-accent">
                         {{ $t('forgot_password') }}
                     </router-link>
@@ -53,35 +59,26 @@
 </template>
 
 <script setup lang="ts">
-import {reactive, ref} from "vue";
-import {login} from "../api";
+import {onMounted, reactive, ref} from "vue";
 import Error from "../components/Error.vue";
 import {useUser} from "../store/user";
 import {useRouter} from "vue-router";
 
 const router = useRouter();
-const user = useUser();
+const userStore = useUser();
 
 const username = ref("");
 const password = ref("");
+const rememberMe = ref(false);
 const loading = ref(false);
-const error = reactive({
-    exist: false,
-    text: "",
-});
 
+onMounted(() => {
+    userStore.setSuccess(false);
+    userStore.setError(false, "");
+})
 const handleLogin = async () => {
-    error.exist = false;
-    error.text = "";
     loading.value = true;
-    const res = await login(username.value, password.value);
-    if (res.ok) {
-        user.setUser(res.data)
-        router.replace("/");
-    } else {
-        error.exist = true;
-        error.text = res.error;
-    }
+    await userStore.logIn(username.value, password.value, rememberMe.value);
     loading.value = false;
 }
 
