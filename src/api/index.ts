@@ -1,4 +1,4 @@
-import {User} from "../store/user/types";
+import {UserForRegister} from "../store/user/types";
 import {useUser} from "../store/user";
 
 const BASE_URL = "http://localhost:8000"
@@ -66,7 +66,7 @@ async function requestWithoutToken(url: string, body: any, method: string = "GET
     }
 }
 
-export async function Register(user: Record<string, any>) {
+export async function Register(user: UserForRegister) {
     return await requestWithoutToken("/register", user, "POST");
 }
 

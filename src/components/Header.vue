@@ -20,7 +20,7 @@
                         </div>
                     </v-col>
                     <v-col :cols="mobile ? 6 : 4">
-                        <div class="d-flex justify-center align-center">
+                        <div class="d-flex justify-center align-center full-height">
                             <router-link to="/" class="text-white-text text-decoration-none"><h2>Doctor Rank</h2>
                             </router-link>
                         </div>
@@ -29,13 +29,15 @@
                         <div class="d-flex justify-end align-center full-height">
                             <ThemeChanger/>
                             <Language :white-text="true"/>
-                            <router-link v-if="user.loggedIn" to="/profile" v-ripple class="cursor-pointer round-btn">
-                                <v-avatar>
-                                    <v-img
-                                        :src="evelyn"
-                                        alt="Evelyn"
-                                    ></v-img>
-                                </v-avatar>
+                            <router-link v-if="userStore.loggedIn" to="/profile" v-ripple
+                                         class="cursor-pointer round-btn text-decoration-none">
+                                <v-list-item
+                                    v-ripple
+                                    :prepend-avatar="avatar"
+                                    :title="fullName"
+                                    :subtitle="userStore.user.username"
+                                    class="text-white"
+                                ></v-list-item>
                             </router-link>
                             <template v-else>
                                 <router-link to="/login" class="text-white-text text-decoration-none ml-4">
@@ -56,16 +58,16 @@
             </div>
         </v-app-bar>
         <v-navigation-drawer v-if="mobile" v-model="drawer" temporary priority="-1">
-            <v-list v-if="user.loggedIn">
+            <v-list v-if="userStore.loggedIn">
                 <router-link
                     to="/profile"
                     class="text-decoration-none text-text"
                 >
                     <v-list-item
                         v-ripple
-                        :prepend-avatar="evelyn"
-                        title="Evelyn Claire"
-                        subtitle="evelynclaire@gmail.com"
+                        :prepend-avatar="avatar"
+                        :title="fullName"
+                        :subtitle="userStore.user.username"
                     ></v-list-item>
                 </router-link>
             </v-list>
@@ -126,9 +128,10 @@ import {useUser} from "../store/user";
 
 const {mobile} = useDisplay();
 const drawer = ref(false);
-const user = useUser();
+const userStore = useUser();
 
-
+const fullName = computed(() => userStore.user.first_name + " " + userStore.user.last_name);
+const avatar = computed(() => userStore.user.img || evelyn);
 </script>
 
 <style scoped lang="scss">
