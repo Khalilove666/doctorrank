@@ -1,5 +1,5 @@
 <template>
-    <router-link class="text-decoration-none" :to="'/doctors/' + props.doctor.user_id" target="_blank">
+    <router-link class="text-decoration-none" :to="'/doctors/' + props.doctor._id" target="_blank">
         <v-card
             class="mx-auto cursor-pointer"
             rounded
@@ -53,7 +53,7 @@ const props = defineProps<Obj>()
 const show = ref(false);
 
 function goToDoctorPage() {
-    router.push({name: "doctor", params: {username: props.doctor.user_id,}})
+    router.push({name: "doctor", params: {doctorId: props.doctor._id,}})
 }
 
 </script>

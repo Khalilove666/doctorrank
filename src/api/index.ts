@@ -1,5 +1,6 @@
 import {UserForRegister} from "../store/user/types";
 import {useUser} from "../store/user";
+import {CommentForUpload} from "../store/comments/types";
 
 const BASE_URL = "http://localhost:8000"
 
@@ -80,4 +81,27 @@ export async function LogOut() {
 
 export async function Refresh() {
     return await requestWithoutToken("/refresh", null, "GET", true);
+}
+
+// DOCTORS
+export async function FetchAllDoctors(term: string, skip: number, limit: number) {
+    return await performRequest(`/doctors?term=${term}&skip=${skip}&limit=${limit}`, null, "GET");
+}
+
+export async function FetchDoctorById(doctor_id: string) {
+    return await performRequest("/doctors/" + doctor_id, null, "GET");
+}
+
+// COMMENTS
+
+export async function FetchAllComments(doctorId: string, skip: number, limit: number) {
+    return await performRequest(`/comments?doctorId=${doctorId}&skip=${skip}&limit=${limit}`, null, "GET");
+}
+
+export async function UploadComment(doctorId: string, comment: CommentForUpload) {
+    return await performRequest(`/comments?doctorId=${doctorId}`, comment, "PUT");
+}
+
+export async function LikeOrDislikeComment(commentId: string, like_status: number) {
+    return await performRequest(`/comments/${commentId}/like`, {like_status}, "PUT");
 }

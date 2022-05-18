@@ -1,7 +1,13 @@
 export interface Comment {
     _id: string,
     doctor_id: string,
-    user_id: string,
+    user: {
+        _id: string,
+        username: string,
+        first_name: string,
+        last_name: string,
+        img: string,
+    }
     text: string,
     rate: number,
     likes: Array<{
@@ -10,4 +16,9 @@ export interface Comment {
     }>,
     created_at: number,
     updated_at: number,
+}
+
+export interface CommentForUpload {
+    text?: string,
+    rate?: number,
 }
