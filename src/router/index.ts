@@ -41,7 +41,7 @@ const routes = [
         component: Doctors
     },
     {
-        path: "/doctors/:username",
+        path: "/doctors/:doctorId",
         name: "doctor",
         component: DoctorPage
     },

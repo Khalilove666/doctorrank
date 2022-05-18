@@ -3,7 +3,7 @@ import {computed, ref} from "vue";
 import {performRequest} from "../api";
 
 
-interface Profession {
+export interface Profession {
     _id: string
     name: string
 }
