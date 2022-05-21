@@ -34,11 +34,11 @@
             color="accent"
             class="mt-4"
         ></v-progress-linear>
-        <div v-if="!doctorStore.nothingFound" class="v-row mt-4" v-for="doctorSquad in displayDoctors">
-            <div class="v-col-12 v-col-sm-6 v-col-md-3" v-for="doctor in doctorSquad" :key="doctor._id">
+        <v-row v-if="!doctorStore.nothingFound" class="mt-4" >
+            <v-col cols="12" sm="6" md="3" v-for="doctor in doctorStore.doctorList" :key="doctor._id">
                 <DoctorCard :doctor="doctor"/>
-            </div>
-        </div>
+            </v-col>
+        </v-row>
         <div v-else class="nothing-found">
             <p class="text-h3 mt-4 full-width text-align-center">Nothing Found</p>
         </div>
@@ -63,25 +63,6 @@ const term = ref("");
 const skip = ref(0);
 const loading = ref(true);
 const selectedProfessions = ref<Array<Profession>>([]);
-
-const displayDoctors = computed(() => {
-    const allDoctors = doctorStore.doctorList;
-    let doctorSquad: CompactDoctor[] = [];
-    let doctors: CompactDoctor[][] = [];
-    let count = 0;
-    allDoctors.forEach((doctor: CompactDoctor) => {
-        if (count < 4) {
-            doctorSquad.push(doctor)
-        } else {
-            doctors.push(doctorSquad);
-            count = 0;
-            doctorSquad = [];
-        }
-    })
-    doctors.push(doctorSquad);
-    return doctors;
-});
-
 
 onMounted(async () => {
     loading.value = true;
