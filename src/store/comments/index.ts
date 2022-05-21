@@ -2,6 +2,7 @@ import {defineStore} from "pinia";
 import {computed, reactive, ref} from "vue";
 import {Comment, CommentForUpload} from "./types";
 import {LikeOrDislikeComment, performRequest, UploadComment} from "../../api";
+import {useUser} from "../user";
 
 
 export const useComments = defineStore("comments", () => {
@@ -54,16 +55,46 @@ export const useComments = defineStore("comments", () => {
         const res = await UploadComment(doctorId, comment);
         if (res.ok) {
             setSuccess(true);
-            setSkip(0);
-            await fetchAllComments(doctorId);
+            const cUser = useUser().user;
+            const newComment = res.data;
+            delete newComment.user_id;
+            newComment.user = {
+                _id: cUser._id,
+                first_name: cUser.first_name,
+                last_name: cUser.last_name,
+                username: cUser.username,
+                img: cUser.img
+            };
+            comments.value.splice(0, 0, newComment);
         } else setError(true, res.error);
     }
 
     async function likeOrDislikeComment(commentId: string, likeStatus: number) {
         const res = await LikeOrDislikeComment(commentId, likeStatus);
         if (res.ok) {
+            const cUserId = useUser().user._id;
+            const index = comments.value.findIndex(comment => comment._id === commentId);
+            const likeIndex = comments.value[index].likes.findIndex(like => like.user_id === cUserId);
+            if (likeIndex === -1) {
+                if (likeStatus === 1) comments.value[index].likes.push({user_id: cUserId, status: true});
+                else comments.value[index].likes.push({user_id: cUserId, status: false});
+            } else {
+                if (likeStatus === 1) comments.value[index].likes[likeIndex].status = true;
+                else if (likeStatus === -1) comments.value[index].likes[likeIndex].status = false;
+                else comments.value[index].likes.splice(likeIndex, 1);
+            }
         }
     }
 
-    return {allComments, success, error, skip, haveMoreToLoad, setSkip, fetchAllComments, uploadComment, likeOrDislikeComment};
+    return {
+        allComments,
+        success,
+        error,
+        skip,
+        haveMoreToLoad,
+        setSkip,
+        fetchAllComments,
+        uploadComment,
+        likeOrDislikeComment
+    };
 })

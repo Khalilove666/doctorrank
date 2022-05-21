@@ -102,16 +102,16 @@
         </v-table>
         <p class="text-h5 mt-4">Rəylər</p>
         <v-divider></v-divider>
-        <div class="write-comment" v-if="userStore.loggedIn && !currentUserComment">
+        <div class="write-comment" v-if="userStore.loggedIn && !currentUserComment && !commentStore.haveMoreToLoad">
             <v-progress-linear
                 :active="commentUploading"
+                indeterminate
                 color="accent"
                 rounded
-                indeterminate
             ></v-progress-linear>
             <div class="d-flex align-center mt-2">
                 <v-avatar>
-                    <v-img :src="userStore.user.img" alt="Evelyn"></v-img>
+                    <v-img :src="userStore.user.img || avatarPlaceHolder" alt="User Avatar"></v-img>
                 </v-avatar>
                 <v-rating
                     v-model="comment.rate"
@@ -151,18 +151,14 @@
 
 <script setup lang="ts">
 import {computed, onMounted, reactive, ref} from "vue";
-import evelyn from "../assets/img/evelyn.jpg";
-import av_hsp from "../assets/img/av_hsp.png";
 import {useDoctors} from "../store/doctors";
-import {useRoute, useRouter} from "vue-router";
+import {useRoute} from "vue-router";
 import CommentItem from "../components/CommentItem.vue";
 import {useComments} from "../store/comments";
-import {load} from "webfontloader";
-import {Doctor} from "../store/doctors/types";
 import {useScreen} from "../composables/screen";
 import {useUser} from "../store/user";
 import {CommentForUpload} from "../store/comments/types";
-
+import avatarPlaceHolder from "../assets/img/avatar.png";
 const route = useRoute();
 const userStore = useUser();
 const doctorStore = useDoctors();
@@ -176,7 +172,6 @@ const comment = reactive<CommentForUpload>({
 })
 const commentUploading = ref(false);
 const commentsLoading = ref(false);
-const term = ref("");
 const doctorId = route.params.doctorId as string;
 
 const currentUserComment = computed(() => {

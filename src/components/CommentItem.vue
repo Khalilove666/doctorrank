@@ -38,7 +38,7 @@
             <v-list-item
                 class="pl-0"
                 v-ripple
-                :prepend-avatar="comment.user.img"
+                :prepend-avatar="comment.user.img || avatarPlaceHolder"
                 :title="comment.user.first_name + ' ' + comment.user.last_name"
                 :subtitle="comment.user.username"
             ></v-list-item>
@@ -51,7 +51,7 @@
 </template>
 
 <script setup lang="ts">
-import evelyn from "../assets/img/evelyn.jpg";
+import avatarPlaceHolder from "../assets/img/avatar.png";
 import {computed, ref} from "vue";
 import {Comment} from "../store/comments/types";
 import moment from "moment";

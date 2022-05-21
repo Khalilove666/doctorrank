@@ -19,7 +19,7 @@ export const useUser = defineStore("user", () => {
         updated_at: 0,
     }
     // STATE
-    let userState = ref<User>(getStoredState("user", defaultUser));
+    let userState = ref<User>(getStoredState(defaultUser));
     const tokenState = ref("");
     const successState = ref(false);
     const errorState = reactive({
@@ -40,7 +40,7 @@ export const useUser = defineStore("user", () => {
         tokenState.value = user.token;
         delete user.token;
         userState.value = user;
-        if (rememberMe) setStoredState("user", user);
+        setLocalState(user, rememberMe);
     }
 
     function setToken(token: string) {
@@ -82,13 +82,15 @@ export const useUser = defineStore("user", () => {
     }
 
     async function logOut(message: string) {
-        await router.replace("/login")
-        setUser(defaultUser, false);
-        setToken("");
-        setSuccess(false);
-        setError(false, "");
-        localStorage.removeItem("user")
-        await LogOut();
+        const res = await LogOut();
+        if (res.ok) {
+            await router.replace("/login")
+            userState.value = defaultUser;
+            setToken("");
+            setSuccess(false);
+            setError(false, "");
+            deleteLocalState();
+        }
     }
 
     async function changeRole() {
@@ -116,12 +118,25 @@ export const useUser = defineStore("user", () => {
     }
 })
 
-function getStoredState(key: string, defaultValue: any): any {
-    const user = localStorage.getItem("user");
-    if (user) return JSON.parse(user);
-    else return defaultValue;
+function getStoredState(defaultValue: any): any {
+    const exist = document.cookie.split(';').some(c => {
+        return c.trim().startsWith('user=');
+    });
+    const localState = localStorage.getItem('user');
+    if (exist && localState) return JSON.parse(localState);
+    else {
+        localStorage.removeItem('user');
+        return defaultValue;
+    }
 }
 
-function setStoredState(key: string, value: any) {
-    localStorage.setItem(key, JSON.stringify(value))
+function setLocalState(value: any, rememberMe: boolean) {
+    const maxAgeMinutes = 10080
+    document.cookie = "user=loggedIn; SameSite=Lax; path=/" + ((rememberMe) ? "; max-age=" + 60 * maxAgeMinutes : "");
+    localStorage.setItem('user', JSON.stringify(value));
+}
+
+function deleteLocalState() {
+    document.cookie = "user=; SameSite=Lax; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT";
+    localStorage.removeItem("user");
 }

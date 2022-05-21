@@ -121,7 +121,7 @@
 <script setup lang="ts">
 import {computed, ref} from "vue";
 import {useDisplay} from "vuetify";
-import evelyn from '../assets/img/evelyn.jpg'
+import avatarPlaceHolder from '../assets/img/avatar.png'
 import ThemeChanger from "./ThemeChanger.vue";
 import Language from "./Language.vue";
 import {useUser} from "../store/user";
@@ -131,7 +131,7 @@ const drawer = ref(false);
 const userStore = useUser();
 
 const fullName = computed(() => userStore.user.first_name + " " + userStore.user.last_name);
-const avatar = computed(() => userStore.user.img || evelyn);
+const avatar = computed(() => userStore.user.img || avatarPlaceHolder);
 </script>
 
 <style scoped lang="scss">
