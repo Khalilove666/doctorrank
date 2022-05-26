@@ -43,6 +43,12 @@ export const useUser = defineStore("user", () => {
         setLocalState(user, rememberMe);
     }
 
+    function setUserImg(imgName: string) {
+        userState.value.img = "";
+        userState.value.img = imgName;
+        localStorage.setItem('user', JSON.stringify(userState.value));
+    }
+
     function setToken(token: string) {
         tokenState.value = token;
     }
@@ -108,6 +114,7 @@ export const useUser = defineStore("user", () => {
         success,
         error,
         setUser,
+        setUserImg,
         setSuccess,
         setToken,
         setError,

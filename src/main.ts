@@ -5,8 +5,8 @@ import {loadFonts} from './plugins/webfontloader'
 import {router} from "./router";
 import {createPinia} from "pinia";
 import {i18n} from "./plugins/i18n";
-import moment from "moment";
 import './styles/main.scss'
+// import moment from "moment";
 
 loadFonts()
 
