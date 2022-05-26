@@ -10,7 +10,15 @@
             ></v-progress-linear>
             <div>
                 <h3>{{ $t('login') }}</h3>
-                <Error v-if="userStore.error.exist" :text="userStore.error.text" class="mt-4"/>
+<!--                <Error v-if="userStore.error.exist" :text="userStore.error.text" class="mt-4"/>-->
+                <v-alert v-if="userStore.error.exist"
+                         type="error"
+                         density="compact"
+                         transition="scale-transition"
+                         closable
+                         variant="outlined"
+                >{{ userStore.error.text }}
+                </v-alert>
                 <v-text-field v-model="username" class="mt-4" color="accent" :label="$t('username_or_email')"
                               variant="outlined"
                               density="compact" hide-details></v-text-field>

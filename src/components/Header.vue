@@ -31,13 +31,11 @@
                             <Language :white-text="true"/>
                             <router-link v-if="userStore.loggedIn" to="/profile" v-ripple
                                          class="cursor-pointer round-btn text-decoration-none">
-                                <v-list-item
-                                    v-ripple
-                                    :prepend-avatar="avatar"
-                                    :title="fullName"
-                                    :subtitle="userStore.user.username"
+                                <UserItem
                                     class="text-white"
-                                ></v-list-item>
+                                    :full-name="fullName"
+                                    :username="userStore.user.username"
+                                    :img="image.userThumbnail.value"/>
                             </router-link>
                             <template v-else>
                                 <router-link to="/login" class="text-white-text text-decoration-none ml-4">
@@ -63,12 +61,9 @@
                     to="/profile"
                     class="text-decoration-none text-text"
                 >
-                    <v-list-item
-                        v-ripple
-                        :prepend-avatar="avatar"
-                        :title="fullName"
-                        :subtitle="userStore.user.username"
-                    ></v-list-item>
+                    <UserItem :full-name="fullName"
+                              :username="userStore.user.username"
+                              :img="image.userThumbnail.value"/>
                 </router-link>
             </v-list>
             <v-list v-else density="compact">
@@ -121,17 +116,18 @@
 <script setup lang="ts">
 import {computed, ref} from "vue";
 import {useDisplay} from "vuetify";
-import avatarPlaceHolder from '../assets/img/avatar.png'
 import ThemeChanger from "./ThemeChanger.vue";
 import Language from "./Language.vue";
 import {useUser} from "../store/user";
+import {useImage} from "../composables/image";
+import UserItem from "./UserItem.vue";
 
 const {mobile} = useDisplay();
-const drawer = ref(false);
+const image = useImage();
 const userStore = useUser();
+const drawer = ref(false);
 
 const fullName = computed(() => userStore.user.first_name + " " + userStore.user.last_name);
-const avatar = computed(() => userStore.user.img || avatarPlaceHolder);
 </script>
 
 <style scoped lang="scss">

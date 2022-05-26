@@ -1,17 +1,15 @@
 import {UserForRegister} from "../store/user/types";
 import {useUser} from "../store/user";
 import {CommentForUpload} from "../store/comments/types";
-
-const BASE_URL = "http://localhost:8000"
-
+const BASE_URL = import.meta.env.VITE_BASE_URL
 
 export async function performRequest(url: string, body: any, method: string = "GET", tries: number = 0): Promise<any> {
     const user = useUser();
     try {
         const res = await fetch(BASE_URL + url, {
             method,
-            headers: {"Content-Type": "application/json", "Authorization": "Bearer " + user.token},
-            body: body ? JSON.stringify(body) : null,
+            headers: {"Authorization": "Bearer " + user.token},
+            body: body ? (body instanceof FormData ? body : JSON.stringify(body)) : null,
         });
         const result = await res.json();
         if (res.ok) {
@@ -82,6 +80,11 @@ export async function LogOut() {
 export async function Refresh() {
     return await requestWithoutToken("/refresh", null, "GET", true);
 }
+
+export async function UploadUserAvatar(data: FormData) {
+    return await performRequest("/avatar", data, "PUT");
+}
+
 
 // DOCTORS
 export async function FetchAllDoctors(term: string, skip: number, limit: number) {
