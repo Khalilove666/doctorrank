@@ -51,12 +51,13 @@
 </template>
 
 <script setup lang="ts">
-import avatarPlaceHolder from "../assets/img/avatar.png";
-import {computed, ref} from "vue";
-import {Comment} from "../store/comments/types";
+import {computed} from "vue";
 import moment from "moment";
 import {useUser} from "../store/user";
 import {useComments} from "../store/comments";
+import {Comment} from "../dtos";
+import {LikeOrDislikeComment} from "../api";
+import avatarPlaceHolder from "../assets/img/avatar.png";
 
 const userStore = useUser();
 const commentStore = useComments();
@@ -79,7 +80,8 @@ async function handleCommentLike(status: number) {
         if (status === -1) likeStatus = 0;
         else likeStatus = 1;
     } else likeStatus = status;
-    await commentStore.likeOrDislikeComment(props.comment._id, likeStatus);
+    const res = await LikeOrDislikeComment(props.comment._id, likeStatus);
+    if (res.ok) commentStore.updateLikeStatus(userStore.user._id, props.comment._id, likeStatus);
 }
 
 </script>

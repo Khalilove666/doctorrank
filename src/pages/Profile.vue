@@ -2,12 +2,12 @@
     <div>
         <div class="pt-2 d-flex justify-space-between">
             <h1>{{ role }}'s Profile</h1>
-            <v-btn @click="userStore.logOut('logout_user_action')" class="bg-accent text-white-text" icon="mdi-logout"
+            <v-btn @click="handleLogOut()" class="bg-accent text-white-text" icon="mdi-logout"
                    size="small"></v-btn>
         </div>
         <v-row class="mt-2">
             <v-col cols="12" md="3">
-                <div class="d-flex position-relative justify-end">
+                <div class="d-flex position-relative justify-end full-height">
                     <img :src="image.userAvatar.value" alt="avatar"
                          class="material-card full-width full-height prevent-user-select"/>
                     <v-btn
@@ -61,7 +61,7 @@
         </v-row>
     </div>
     <v-divider class="mt-4"></v-divider>
-    <v-btn v-if="role==='user'" @click="userStore.changeRole()" class="bg-accent text-white-text mt-4" block>
+    <v-btn v-if="role==='user'" @click="handleChangeRole()" class="bg-accent text-white-text mt-4" block>
         CHANGE TO DOCTOR PROFILE
     </v-btn>
     <div v-else class="doctor-info">
@@ -268,11 +268,14 @@
                 </v-toolbar-items>
             </v-toolbar>
             <v-progress-linear
-                :active="dialog.loading"
-                indeterminate
+                v-if="dialog.loading"
                 color="accent"
+                :model-value="progress.loaded"
+                height="20"
                 rounded
-            ></v-progress-linear>
+            >
+                <strong>{{ progress.loaded }}</strong>
+            </v-progress-linear>
             <div class="v-container">
                 <v-alert v-if="dialog.error.exist"
                          type="error"
@@ -313,12 +316,11 @@
 import {useUser} from "../store/user";
 import {storeToRefs} from "pinia";
 import {computed, reactive, ref} from "vue";
-import {Education, Experience} from "../store/doctors/types";
 import {Cropper} from 'vue-advanced-cropper'
 import 'vue-advanced-cropper/dist/style.css';
-import Error from "../components/Error.vue";
-import {UploadUserAvatar} from "../api";
 import {useImage} from "../composables/image";
+import {ChangeRole, LogOut, UploadUserAvatar} from "../api";
+import {Education, Experience} from "../dtos";
 
 enum Dialog {Avatar, DoctorAvatar, Hospital, Profession}
 
@@ -337,6 +339,9 @@ const editingUser = ref(false);
 const file = ref<File>();
 const imageCoordinates = ref<Coordinates>()
 
+const progress = reactive({
+    loaded: 10
+});
 const dialog = reactive({
     show: false,
     loading: false,
@@ -375,6 +380,17 @@ const dialogTitle = computed(() => {
             return "Add Profession";
     }
 })
+
+
+async function handleChangeRole() {
+    const res = await ChangeRole();
+    if (res.ok) userStore.changeRole("doctor");
+}
+
+async function handleLogOut() {
+    const res = await LogOut();
+    if (res.ok) userStore.deleteUser("logout_user_action")
+}
 
 function handleUserSave() {
     editingUser.value = false;
@@ -442,7 +458,10 @@ async function handleDialogSave() {
         data.append("file", file.value as File);
         data.append("coordinates", JSON.stringify(imageCoordinates.value));
         dialog.loading = true;
-        const res = await UploadUserAvatar(data);
+        const res = await UploadUserAvatar(data, (e: { loaded: number; total: number; }) => {
+            console.log("PROGRESS", (e.loaded * 100) / e.total);
+            progress.loaded = (e.loaded * 100) / e.total;
+        });
         dialog.loading = false;
         if (res.ok) {
             dialog.success.exist = true;
