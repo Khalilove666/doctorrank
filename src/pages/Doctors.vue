@@ -15,7 +15,7 @@
             <div class="v-col-12 v-col-sm-6">
                 <v-autocomplete
                     v-model="selectedProfessions"
-                    :items="professionStore.allProfessions"
+                    :items="professions"
                     density="compact"
                     chips
                     small-chips
@@ -34,46 +34,48 @@
             color="accent"
             class="mt-4"
         ></v-progress-linear>
-        <v-row v-if="!doctorStore.nothingFound" class="mt-4" >
-            <v-col cols="12" sm="6" md="3" v-for="doctor in doctorStore.doctorList" :key="doctor._id">
+        <v-row v-if="!nothingFound" class="mt-4">
+            <v-col cols="12" sm="6" md="3" v-for="doctor in doctors" :key="doctor._id">
                 <DoctorCard :doctor="doctor"/>
             </v-col>
         </v-row>
         <div v-else class="nothing-found">
             <p class="text-h3 mt-4 full-width text-align-center">Nothing Found</p>
         </div>
+        <div v-if="!nothingFound && !haveMore">
+            <p class="text-h3 mt-4 full-width text-align-center">No more result</p>
+        </div>
     </div>
 </template>
 
 <script setup lang="ts">
-import DoctorCard from "../components/DoctorCard.vue";
-import {computed, onMounted, reactive, ref} from "vue";
+import {onMounted, ref} from "vue";
 import {debounce} from "ts-debounce";
-import {Profession, useProfessions} from "../store/professions";
-import {useDoctors} from "../store/doctors";
-import {CompactDoctor} from "../store/doctors/types";
 import {useScreen} from "../composables/screen";
+import {FetchAllDoctors, FetchAllProfessions} from "../api";
+import {CompactDoctor, Profession} from "../dtos";
+import DoctorCard from "../components/DoctorCard.vue";
 
-const searchDoctors = debounce(searchByTerm, 600);
-const professionStore = useProfessions();
-const doctorStore = useDoctors();
 const screen = useScreen();
+const searchDoctors = debounce(searchByTerm, 600);
+
+const professions = ref<Profession[]>([]);
+const selectedProfessions = ref<Array<Profession>>([]);
+const doctors = ref<Array<CompactDoctor>>([]);
 
 const term = ref("");
 const skip = ref(0);
 const loading = ref(true);
-const selectedProfessions = ref<Array<Profession>>([]);
+const nothingFound = ref(false);
+const haveMore = ref(true);
 
 onMounted(async () => {
-    loading.value = true;
-    await professionStore.fetchProfessions();
-    await doctorStore.fetchAllDoctors("", 0);
-    loading.value = false;
+    await fetchProfessions();
+    await fetchAllDoctors();
     screen.onScrolledBottom(async () => {
-        if (doctorStore.loadMore) {
-            loading.value = true;
-            await loadMore();
-            loading.value = false;
+        if (haveMore.value) {
+            skip.value += 24;
+            await fetchAllDoctors();
         }
     })
 });
@@ -81,16 +83,35 @@ onMounted(async () => {
 async function searchByTerm(event: any) {
     term.value = event.target.value;
     skip.value = 0;
-    doctorStore.setLoadMore(true);
-    loading.value = true;
-    await doctorStore.fetchAllDoctors(term.value, skip.value);
-    loading.value = false;
+    haveMore.value = true;
+    await fetchAllDoctors();
 }
 
-async function loadMore() {
-    skip.value = skip.value + 12;
-    await doctorStore.fetchAllDoctors(term.value, skip.value);
+async function fetchProfessions() {
+    const res = await FetchAllProfessions();
+    if (res.ok) professions.value = res.data;
 }
+
+async function fetchAllDoctors() {
+    loading.value = true;
+    const res = await FetchAllDoctors(term.value, skip.value, 24);
+    loading.value = false;
+    if (res.ok) {
+        if (!res.data) {
+            if (skip.value === 0) {
+                doctors.value = [];
+                nothingFound.value = true;
+            } else{
+                haveMore.value = false;
+            }
+        } else {
+            nothingFound.value = false;
+            const prev = doctors.value;
+            doctors.value = skip.value === 0 ? res.data : prev.concat(res.data);
+        }
+    }
+}
+
 
 </script>
 

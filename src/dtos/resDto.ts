@@ -1,5 +1,15 @@
-import {Profession} from "../professions";
-import {Hospital} from "../hospitals/types";
+export interface User {
+    _id: string
+    first_name: string
+    last_name: string
+    email: string
+    username: string
+    role: string
+    img: string
+    token?: string
+    created_at: number
+    updated_at: number
+}
 
 export interface CompactDoctor {
     _id: string,
@@ -41,7 +51,6 @@ export interface Doctor {
     },
     created_at: number,
     updated_at: number,
-
 }
 
 export interface Experience {
@@ -60,4 +69,35 @@ export interface Education {
     term_start: number,
     term_end: number,
     country: string,
+}
+
+export interface Hospital {
+    _id: string,
+    name: string,
+    img: string,
+}
+
+export interface Profession {
+    _id: string
+    name: string
+}
+
+export interface Comment {
+    _id: string,
+    doctor_id: string,
+    user: {
+        _id: string,
+        username: string,
+        first_name: string,
+        last_name: string,
+        img: string,
+    }
+    text: string,
+    rate: number,
+    likes: Array<{
+        user_id: string,
+        status: boolean,
+    }>,
+    created_at: number,
+    updated_at: number,
 }

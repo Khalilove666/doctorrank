@@ -10,7 +10,7 @@
             ></v-progress-linear>
             <div>
                 <h3>{{ $t('register') }}</h3>
-                <Error v-if="userStore.error.exist" :text="userStore.error.text" class="mt-4"/>
+                <Error v-if="error.exist" :text="error.text" class="mt-4"/>
                 <v-form
                     ref="form"
                 >
@@ -23,7 +23,6 @@
                         variant="outlined"
                         density="compact"
                         hide-details="auto"
-                        :rules="[ruleEmpty]"
                     ></v-text-field>
                     <v-text-field
                         v-model="lastName"
@@ -34,7 +33,6 @@
                         variant="outlined"
                         density="compact"
                         hide-details="auto"
-                        :rules="[ruleEmpty]"
                     ></v-text-field>
                     <v-text-field
                         v-model="email"
@@ -108,16 +106,17 @@
 </template>
 
 <script setup lang="ts">
-import {computed, onMounted, reactive, ref} from "vue";
+import {reactive, ref} from "vue";
 import Error from "../components/Error.vue";
 import {useRules} from "../composables/rules";
 import {useUser} from "../store/user";
+import {Register} from "../api";
+import {useRouter} from "vue-router";
+import {RegisterDTO} from "../dtos";
 
+const router = useRouter();
 const rules = useRules();
 const userStore = useUser();
-
-const ruleEmpty = computed((value: string) => !!value || "empty");
-const ruleNumber = computed((value) => /^[0-9]*[.]{0,1}[0-9]*$/g.test(value) || "rule_number");
 
 const firstName = ref("");
 const lastName = ref("");
@@ -125,23 +124,31 @@ const email = ref("");
 const username = ref("");
 const password = ref("");
 const passwordConfirm = ref("");
-const loading = ref(false);
 
-onMounted(() => {
-    userStore.setSuccess(false);
-    userStore.setError(false, "");
-})
+const loading = ref(false);
+const success = ref(false);
+const error = reactive({exist: false, text: ""});
 
 const handleRegister = async () => {
-    const user = {
+    const user: RegisterDTO = {
         first_name: firstName.value,
         last_name: lastName.value,
         email: email.value,
         username: username.value,
         password: password.value,
     }
+    success.value = false;
+    error.exist = false;
+    error.text = "";
     loading.value = true;
-    await userStore.register(user);
+    const res = await Register(user);
+    if (res.ok) {
+        success.value = true;
+        await router.replace("/login");
+    } else {
+        error.exist = true;
+        error.text = res.error;
+    }
     loading.value = false;
 }
 </script>

@@ -8,6 +8,7 @@ export const useThemeAndLang = defineStore('theme', () => {
         const lang = ref(localLang())
         const {locale} = useI18n({useScope: "global"})
         locale.value = lang.value;
+
         // GETTERS
         const currentTheme = computed((state) => {
             return theme.value;

@@ -10,14 +10,14 @@
             ></v-progress-linear>
             <div>
                 <h3>{{ $t('login') }}</h3>
-<!--                <Error v-if="userStore.error.exist" :text="userStore.error.text" class="mt-4"/>-->
-                <v-alert v-if="userStore.error.exist"
+                <!--                <Error v-if="error.exist" :text="error.text" class="mt-4"/>-->
+                <v-alert v-if="error.exist"
                          type="error"
                          density="compact"
                          transition="scale-transition"
                          closable
                          variant="outlined"
-                >{{ userStore.error.text }}
+                >{{ error.text }}
                 </v-alert>
                 <v-text-field v-model="username" class="mt-4" color="accent" :label="$t('username_or_email')"
                               variant="outlined"
@@ -68,9 +68,10 @@
 
 <script setup lang="ts">
 import {onMounted, reactive, ref} from "vue";
-import Error from "../components/Error.vue";
 import {useUser} from "../store/user";
 import {useRouter} from "vue-router";
+import {Login} from "../api";
+import {LoginDTO} from "../dtos";
 
 const router = useRouter();
 const userStore = useUser();
@@ -78,15 +79,25 @@ const userStore = useUser();
 const username = ref("");
 const password = ref("");
 const rememberMe = ref(false);
-const loading = ref(false);
 
-onMounted(() => {
-    userStore.setSuccess(false);
-    userStore.setError(false, "");
-})
+const loading = ref(false);
+const success = ref(false);
+const error = reactive({exist: false, text: ""});
+
 const handleLogin = async () => {
+    error.exist = false;
+    error.text = "";
     loading.value = true;
-    await userStore.logIn(username.value, password.value, rememberMe.value);
+    const user: LoginDTO = {login: username.value, password: password.value, remember_me: rememberMe.value};
+    const res = await Login(user);
+    if (res.ok) {
+        userStore.setUser(res.data, rememberMe.value)
+        success.value = true;
+        await router.replace("/");
+    } else {
+        error.exist = true;
+        error.text = res.error;
+    }
     loading.value = false;
 }
 

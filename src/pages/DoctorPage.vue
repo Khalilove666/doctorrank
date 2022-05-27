@@ -4,16 +4,14 @@
         <div class="v-row">
             <div class="v-col-12 v-col-sm-3">
                 <v-card class="mx-auto" rounded>
-                    <v-img :src="doctorStore.doctor.img" cover></v-img>
+                    <v-img :src="doctor.img" cover></v-img>
                 </v-card>
             </div>
             <div class="v-col-12 v-col-sm-9">
                 <div class="v-row">
                     <div class="v-col-12 v-col-sm-8">
                         <div class="d-flex flex-column">
-                            <p class="text-h3">{{
-                                    doctorStore.doctor.title + " " + doctorStore.doctor.first_name + " " + doctorStore.doctor.last_name
-                                }}</p>
+                            <p class="text-h3">{{ doctor.title + " " + doctor.first_name + " " + doctor.last_name }}</p>
                             <v-chip
                                 color="pink"
                                 label
@@ -21,18 +19,18 @@
                                 class="mt-2 width-fit-content"
                             >
                                 <v-icon start icon="mdi-label"></v-icon>
-                                {{ doctorStore.doctor.profession.name }}
+                                {{ doctor.profession.name }}
                             </v-chip>
                             <div class="d-flex align-center">
                                 <v-rating
-                                    :model-value="doctorStore.doctor.rate"
+                                    :model-value="doctor.rate"
                                     half-increments
                                     readonly
                                     color="yellow"
                                     size="large"
                                     density="compact"
                                 ></v-rating>
-                                <p class="ml-2">({{ doctorStore.doctor.reviews }})</p>
+                                <p class="ml-2">({{ doctor.reviews }})</p>
                             </div>
 
                         </div>
@@ -45,15 +43,15 @@
                             :class="{'float-right': !$vuetify.display.mobile}"
                         >
                             <v-avatar left>
-                                <v-img :src="doctorStore.doctor.hospital.img"></v-img>
+                                <v-img :src="doctor.hospital.img"></v-img>
                             </v-avatar>
-                            {{ doctorStore.doctor.hospital.name }}
+                            {{ doctor.hospital.name }}
                         </v-chip>
                     </div>
                 </div>
                 <p class="text-h5 mt-4">Haqqında</p>
                 <v-divider></v-divider>
-                <p class="mt-2">{{ doctorStore.doctor.about }}</p>
+                <p class="mt-2">{{ doctor.about }}</p>
             </div>
         </div>
         <p class="text-h5 mt-4">İş təcrübəsi</p>
@@ -102,7 +100,7 @@
         </v-table>
         <p class="text-h5 mt-4">Rəylər</p>
         <v-divider></v-divider>
-        <div class="write-comment" v-if="userStore.loggedIn && !currentUserComment && !commentStore.haveMoreToLoad">
+        <div class="write-comment" v-if="userStore.loggedIn && !currentUserComment">
             <v-progress-linear
                 :active="commentUploading"
                 indeterminate
@@ -131,7 +129,7 @@
             <router-link color="accent" to="/login">Log in To write comment</router-link>
         </div>
         <v-divider class="mt-2"></v-divider>
-        <div v-for="comment in commentStore.allComments" :key="comment._id">
+        <div v-for="comment in commentStore.comments" :key="comment._id">
             <CommentItem :comment="comment"/>
         </div>
         <v-progress-linear
@@ -140,65 +138,121 @@
             rounded
             color="accent"
         ></v-progress-linear>
-        <div v-if="commentStore.skip===12 && !commentStore.haveMoreToLoad" class="py-2 text-align-center">No reviews
-            yet
-        </div>
-        <div v-if="commentStore.skip!==12 && !commentStore.haveMoreToLoad" class="py-2 text-align-center">No more
-            reviews to load
-        </div>
+        <div v-if="noComments" class="py-2 text-align-center">No reviews yet</div>
+        <div v-if="!noComments && !haveMoreComments" class="py-2 text-align-center">No more reviews to load</div>
     </div>
 </template>
 
 <script setup lang="ts">
 import {computed, onMounted, reactive, ref} from "vue";
-import {useDoctors} from "../store/doctors";
 import {useRoute} from "vue-router";
-import CommentItem from "../components/CommentItem.vue";
-import {useComments} from "../store/comments";
+
 import {useScreen} from "../composables/screen";
 import {useUser} from "../store/user";
-import {CommentForUpload} from "../store/comments/types";
+import {useComments} from "../store/comments";
+import {FetchAllComments, FetchDoctorById, UploadComment} from "../api";
+import {Comment, CommentReqDTO, Doctor} from "../dtos";
+import CommentItem from "../components/CommentItem.vue";
 import avatarPlaceHolder from "../assets/img/avatar.png";
+
 const route = useRoute();
 const userStore = useUser();
-const doctorStore = useDoctors();
 const commentStore = useComments();
 const screen = useScreen();
 
-
-const comment = reactive<CommentForUpload>({
+const doctorId = route.params.doctorId as string;
+const doctor = ref<Doctor>({
+    _id: "",
+    about: "",
+    contact: {email: "", facebook: "", phone: ""},
+    created_at: 0,
+    education: [],
+    experience: [],
+    first_name: "",
+    full_name: "",
+    hospital: {_id: "", name: "", img: ""},
+    img: "",
+    last_name: "",
+    profession: {_id: "", name: ""},
+    rate: 0,
+    reviews: 0,
+    title: "",
+    updated_at: 0,
+    user_id: ""
+});
+const comments = ref<Array<Comment>>([]);
+const comment = reactive<CommentReqDTO>({
     rate: 5,
     text: "",
 })
+
 const commentUploading = ref(false);
 const commentsLoading = ref(false);
-const doctorId = route.params.doctorId as string;
+const haveMoreComments = ref(true);
+const noComments = ref(false);
+const success = ref(false);
+const error = reactive({
+    exist: false,
+    text: "",
+})
+const skip = ref(0);
 
 const currentUserComment = computed(() => {
-    return commentStore.allComments.find(comment => comment.user._id === userStore.user._id);
+    return commentStore.comments.find(comment => comment.user._id === userStore.user._id);
 });
 
 onMounted(async () => {
-    commentStore.setSkip(0);
-    await doctorStore.fetchDoctorById(doctorId);
+    const res = await FetchDoctorById(doctorId);
+    if (res.ok) doctor.value = res.data;
+    await fetchAllComments();
     screen.onScrolledBottom(async () => {
-        if (commentStore.haveMoreToLoad) {
-            await loadComments();
+        if (haveMoreComments.value) {
+            await fetchAllComments();
         }
     });
 })
 
-async function loadComments() {
+async function fetchAllComments() {
     commentsLoading.value = true;
-    await commentStore.fetchAllComments(doctorId);
+    const res = await FetchAllComments(doctorId, skip.value, 50);
     commentsLoading.value = false;
+    if (res.ok) {
+        if (res.data === null) {
+            if (skip.value === 0) {
+                noComments.value = true;
+            } else {
+                haveMoreComments.value = false;
+            }
+        } else {
+            commentStore.setComments(res.data, skip.value === 0);
+        }
+        skip.value += 50;
+    }
 }
 
 async function uploadComment() {
     commentUploading.value = true;
-    await commentStore.uploadComment(doctorId, comment);
+    const res = await UploadComment(doctorId, comment);
     commentUploading.value = false;
+    if (res.ok) {
+        success.value = true;
+        const cUser = userStore.user;
+        const newComment = res.data;
+        delete newComment.user_id;
+        newComment.user = {
+            _id: cUser._id,
+            first_name: cUser.first_name,
+            last_name: cUser.last_name,
+            username: cUser.username,
+            img: cUser.img
+        };
+        commentStore.appendUserComment(newComment);
+    } else {
+        error.exist = true;
+        error.text = res.error;
+    }
 }
+
 
 const experience = [
     {
