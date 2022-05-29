@@ -12,6 +12,7 @@ import {
 import {
     RegisterDTO,
     LoginDTO,
+    DoctorDTO,
     CommentReqDTO
 } from "./reqDto";
 
@@ -26,5 +27,6 @@ export type {
     Comment,
     RegisterDTO,
     LoginDTO,
+    DoctorDTO,
     CommentReqDTO
 };
