@@ -1,5 +1,5 @@
 import performRequest, {requestWithCredentials} from "./client";
-import {CommentReqDTO, LoginDTO, RegisterDTO} from "../dtos";
+import {CommentReqDTO, DoctorDTO, LoginDTO, RegisterDTO} from "../dtos";
 
 
 // USER
@@ -28,12 +28,19 @@ export async function UploadUserAvatar(data: FormData, handleUploadProgress: (e:
 }
 
 // DOCTORS
+export async function CreateOrUpdateDoctor(doctor: DoctorDTO) {
+    return await performRequest("/doctors", "PUT", doctor);
+}
+
 export async function FetchAllDoctors(term: string, skip: number, limit: number) {
     return await performRequest(`/doctors?term=${term}&skip=${skip}&limit=${limit}`, "GET");
 }
 
 export async function FetchDoctorById(doctor_id: string) {
     return await performRequest("/doctors/" + doctor_id, "GET");
+}
+export async function FetchDoctorByAuth() {
+    return await performRequest("/doctors/self", "GET");
 }
 
 // COMMENTS
@@ -52,4 +59,7 @@ export async function LikeOrDislikeComment(commentId: string, like_status: numbe
 // PROFESSIONS
 export async function FetchAllProfessions() {
     return await performRequest("/professions", "GET");
+}
+export async function CreateProfession(name: string) {
+    return await performRequest("/professions", "POST", {name});
 }

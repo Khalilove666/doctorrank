@@ -32,10 +32,14 @@ export const useUser = defineStore("user", () => {
         setLocalState(user, rememberMe);
     }
 
+    function updateLocalState() {
+        localStorage.setItem('user', JSON.stringify(userState.value));
+    }
+
     function setUserImg(imgName: string) {
         userState.value.img = "";
         userState.value.img = imgName;
-        localStorage.setItem('user', JSON.stringify(userState.value));
+        updateLocalState();
     }
 
     function setToken(token: string) {
@@ -49,7 +53,8 @@ export const useUser = defineStore("user", () => {
     }
 
     function changeRole(role: string) {
-        userState.value.role = "doctor";
+        userState.value.role = role;
+        updateLocalState();
     }
 
     return {

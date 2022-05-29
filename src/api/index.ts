@@ -11,6 +11,9 @@ import {
     UploadComment,
     LikeOrDislikeComment,
     FetchAllProfessions,
+    FetchDoctorByAuth,
+    CreateOrUpdateDoctor,
+    CreateProfession,
 } from './endpoints'
 
 export {
@@ -26,4 +29,7 @@ export {
     UploadComment,
     LikeOrDislikeComment,
     FetchAllProfessions,
+    FetchDoctorByAuth,
+    CreateOrUpdateDoctor,
+    CreateProfession,
 };
