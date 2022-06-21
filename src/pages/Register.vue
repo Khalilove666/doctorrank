@@ -8,7 +8,7 @@
                 color="primary"
                 indeterminate
             ></v-progress-linear>
-            <div>
+            <div v-if="!success">
                 <h3>{{ $t('register') }}</h3>
                 <Error v-if="error.exist" :text="error.text" class="mt-4"/>
                 <v-form
@@ -111,6 +111,11 @@
                     ></v-btn>
                 </div>
             </div>
+            <div v-else class="d-flex flex-column mt-4">
+                <v-alert type="success" transition="scale-transition">Registration successful !</v-alert>
+                <p class="mt-4 align-self-center">We have just sent you confirmation mail. Please check your inbox to
+                    activate your profile.</p>
+            </div>
         </v-card>
     </div>
 </template>
@@ -119,14 +124,12 @@
 import {reactive, ref} from "vue";
 import Error from "../components/Error.vue";
 import {useRules} from "../composables/rules";
-import {useUser} from "../store/user";
 import {Register} from "../api";
 import {useRouter} from "vue-router";
 import {RegisterDTO} from "../dtos";
 
 const router = useRouter();
 const rules = useRules();
-const userStore = useUser();
 
 const firstName = ref("");
 const lastName = ref("");
@@ -151,19 +154,17 @@ const handleRegister = async () => {
             username: username.value,
             password: password.value,
         }
-        success.value = false;
         error.exist = false;
         error.text = "";
         loading.value = true;
         const res = await Register(user);
+        loading.value = false;
         if (res.ok) {
             success.value = true;
-            await router.replace("/login");
         } else {
             error.exist = true;
             error.text = res.error;
         }
-        loading.value = false;
     }
 
 }

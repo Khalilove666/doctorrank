@@ -1,5 +1,6 @@
 import {
     Register,
+    ConfirmEmail,
     Login,
     LogOut,
     Refresh,
@@ -18,6 +19,7 @@ import {
 
 export {
     Register,
+    ConfirmEmail,
     Login,
     LogOut,
     Refresh,
