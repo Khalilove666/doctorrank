@@ -19,12 +19,29 @@
                          variant="outlined"
                 >{{ error.text }}
                 </v-alert>
-                <v-text-field v-model="username" class="mt-4" color="accent" :label="$t('username_or_email')"
-                              variant="outlined"
-                              density="compact" hide-details></v-text-field>
-                <v-text-field v-model="password" class="mt-4" color="accent" :label="$t('password')" type="password"
-                              variant="outlined"
-                              density="compact" hide-details></v-text-field>
+                <v-form ref="form">
+                    <v-text-field v-model="username"
+                                  class="mt-4"
+                                  color="accent"
+                                  :label="$t('username_or_email')"
+                                  variant="outlined"
+                                  density="compact"
+                                  hide-details="auto"
+                                  :rules="[rules.empty]"
+                    ></v-text-field>
+                    <v-text-field v-model="password"
+                                  class="mt-4"
+                                  color="accent"
+                                  :label="$t('password')"
+                                  :type="showPassword ? 'text' : 'password'"
+                                  :append-inner-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
+                                  @click:append-inner="showPassword = !showPassword"
+                                  variant="outlined"
+                                  density="compact"
+                                  hide-details="auto"
+                                  :rules="[rules.empty]"
+                    ></v-text-field>
+                </v-form>
                 <div class="d-flex justify-space-between align-center">
                     <v-checkbox
                         v-model="rememberMe"
@@ -72,33 +89,40 @@ import {useUser} from "../store/user";
 import {useRouter} from "vue-router";
 import {Login} from "../api";
 import {LoginDTO} from "../dtos";
+import {useRules} from "../composables/rules";
 
 const router = useRouter();
 const userStore = useUser();
+const rules = useRules();
 
 const username = ref("");
 const password = ref("");
 const rememberMe = ref(false);
 
+const showPassword = ref(false);
 const loading = ref(false);
 const success = ref(false);
 const error = reactive({exist: false, text: ""});
+const form = ref<Element & { validate: () => Promise<{ valid: boolean, errorMessages: any }> } | null>(null);
 
 const handleLogin = async () => {
-    error.exist = false;
-    error.text = "";
-    loading.value = true;
-    const user: LoginDTO = {login: username.value, password: password.value, remember_me: rememberMe.value};
-    const res = await Login(user);
-    if (res.ok) {
-        userStore.setUser(res.data, rememberMe.value)
-        success.value = true;
-        await router.replace("/");
-    } else {
-        error.exist = true;
-        error.text = res.error;
+    const validation = await form.value?.validate()
+    if (validation?.valid) {
+        error.exist = false;
+        error.text = "";
+        loading.value = true;
+        const user: LoginDTO = {login: username.value, password: password.value, remember_me: rememberMe.value};
+        const res = await Login(user);
+        if (res.ok) {
+            userStore.setUser(res.data, rememberMe.value)
+            success.value = true;
+            await router.replace("/");
+        } else {
+            error.exist = true;
+            error.text = res.error;
+        }
+        loading.value = false;
     }
-    loading.value = false;
 }
 
 </script>

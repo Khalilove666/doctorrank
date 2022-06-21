@@ -101,7 +101,7 @@ async function fetchAllDoctors() {
             if (skip.value === 0) {
                 doctors.value = [];
                 nothingFound.value = true;
-            } else{
+            } else {
                 haveMore.value = false;
             }
         } else {

@@ -23,6 +23,7 @@
                         variant="outlined"
                         density="compact"
                         hide-details="auto"
+                        :rules="[rules.empty]"
                     ></v-text-field>
                     <v-text-field
                         v-model="lastName"
@@ -33,6 +34,7 @@
                         variant="outlined"
                         density="compact"
                         hide-details="auto"
+                        :rules="[rules.empty]"
                     ></v-text-field>
                     <v-text-field
                         v-model="email"
@@ -41,7 +43,8 @@
                         :label="$t('email')"
                         variant="outlined"
                         density="compact"
-                        hide-details
+                        hide-details="auto"
+                        :rules="[rules.empty, rules.email]"
                     ></v-text-field>
                     <v-text-field
                         v-model="username"
@@ -50,27 +53,34 @@
                         :label="$t('select_username')"
                         variant="outlined"
                         density="compact"
-                        hide-details
+                        hide-details="auto"
+                        :rules="[rules.empty]"
                     ></v-text-field>
                     <v-text-field
                         v-model="password"
                         class="mt-4"
                         color="accent"
                         :label="$t('password')"
-                        type="password"
+                        :type="showPassword ? 'text' : 'password'"
+                        :append-inner-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
+                        @click:append-inner="showPassword = !showPassword"
                         variant="outlined"
                         density="compact"
-                        hide-details
+                        hide-details="auto"
+                        :rules="[rules.empty, rules.password]"
                     ></v-text-field>
                     <v-text-field
                         v-model="passwordConfirm"
                         class="mt-4"
                         color="accent"
                         :label="$t('confirm_password')"
-                        type="password"
+                        :type="showPassword ? 'text' : 'password'"
+                        :append-inner-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
+                        @click:append-inner="showPassword = !showPassword"
                         variant="outlined"
                         density="compact"
-                        hide-details
+                        hide-details="auto"
+                        :rules="[passwordMatch]"
                     ></v-text-field>
                 </v-form>
                 <div class="d-flex justify-end">
@@ -125,31 +135,41 @@ const username = ref("");
 const password = ref("");
 const passwordConfirm = ref("");
 
+const showPassword = ref(false);
 const loading = ref(false);
 const success = ref(false);
 const error = reactive({exist: false, text: ""});
+const form = ref<Element & { validate: () => Promise<{ valid: boolean, errorMessages: any }> } | null>(null);
 
 const handleRegister = async () => {
-    const user: RegisterDTO = {
-        first_name: firstName.value,
-        last_name: lastName.value,
-        email: email.value,
-        username: username.value,
-        password: password.value,
+    const validation = await form.value?.validate()
+    if (validation?.valid) {
+        const user: RegisterDTO = {
+            first_name: firstName.value,
+            last_name: lastName.value,
+            email: email.value,
+            username: username.value,
+            password: password.value,
+        }
+        success.value = false;
+        error.exist = false;
+        error.text = "";
+        loading.value = true;
+        const res = await Register(user);
+        if (res.ok) {
+            success.value = true;
+            await router.replace("/login");
+        } else {
+            error.exist = true;
+            error.text = res.error;
+        }
+        loading.value = false;
     }
-    success.value = false;
-    error.exist = false;
-    error.text = "";
-    loading.value = true;
-    const res = await Register(user);
-    if (res.ok) {
-        success.value = true;
-        await router.replace("/login");
-    } else {
-        error.exist = true;
-        error.text = res.error;
-    }
-    loading.value = false;
+
+}
+
+function passwordMatch(value: string) {
+    return value == password.value || "password_not_match"
 }
 </script>
 
