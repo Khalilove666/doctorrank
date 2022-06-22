@@ -392,10 +392,12 @@
                          transition="scale-transition"
                 >{{ dialog.error.text }}
                 </v-alert>
-                <v-text-field v-model="professionName" v-if="dialog.type===Dialog.Profession" class="full-width mt-1" label="Profession name"
+                <v-text-field v-model="professionName" v-if="dialog.type===Dialog.Profession" class="full-width mt-1"
+                              label="Profession name"
                               variant="outlined"
                               density="compact" hide-details></v-text-field>
-                <v-text-field v-model="hospitalName" v-if="dialog.type===Dialog.Hospital" class="full-width mt-1" label="Hospital name"
+                <v-text-field v-model="hospitalName" v-if="dialog.type===Dialog.Hospital" class="full-width mt-1"
+                              label="Hospital name"
                               variant="outlined" density="compact"
                               hide-details></v-text-field>
                 <div
@@ -430,6 +432,7 @@ import 'vue-advanced-cropper/dist/style.css';
 import {useImage} from "../composables/image";
 import {ChangeRole, CreateOrUpdateDoctor, CreateProfession, FetchDoctorByAuth, LogOut, UploadUserAvatar} from "../api";
 import {Doctor, DoctorDTO} from "../dtos";
+import {router} from "../router";
 
 enum Dialog {Avatar, DoctorAvatar, Hospital, Profession}
 
@@ -549,7 +552,11 @@ async function handleChangeRole() {
 
 async function handleLogOut() {
     const res = await LogOut();
-    if (res.ok) userStore.deleteUser("logout_user_action")
+    if (res.ok) {
+        userStore.deleteUser("logout_user_action");
+        await router.replace("/login");
+    }
+
 }
 
 async function handleUserSave() {

@@ -7,6 +7,10 @@ export async function Register(user: RegisterDTO) {
     return await performRequest("/register", "POST", user);
 }
 
+export async function ConfirmEmail(token: string) {
+    return await performRequest("/activation?activationToken=" + token, "POST");
+}
+
 export async function Login(user: LoginDTO) {
     return await requestWithCredentials("/login", "POST", user);
 }
@@ -39,6 +43,7 @@ export async function FetchAllDoctors(term: string, skip: number, limit: number)
 export async function FetchDoctorById(doctor_id: string) {
     return await performRequest("/doctors/" + doctor_id, "GET");
 }
+
 export async function FetchDoctorByAuth() {
     return await performRequest("/doctors/self", "GET");
 }
@@ -60,6 +65,7 @@ export async function LikeOrDislikeComment(commentId: string, like_status: numbe
 export async function FetchAllProfessions() {
     return await performRequest("/professions", "GET");
 }
+
 export async function CreateProfession(name: string) {
     return await performRequest("/professions", "POST", {name});
 }

@@ -7,6 +7,7 @@ import Profile from '../pages/Profile.vue';
 import Doctors from '../pages/Doctors.vue';
 import DoctorPage from '../pages/DoctorPage.vue';
 import About from '../pages/About.vue';
+import ProfileActivation from "../pages/ProfileActivation.vue";
 import {useUser} from "../store/user";
 
 const routes = [
@@ -29,6 +30,11 @@ const routes = [
         path: "/register",
         name: "register",
         component: Register
+    },
+    {
+        path: "/activation",
+        name: "activation",
+        component: ProfileActivation
     },
     {
         path: "/profile",
