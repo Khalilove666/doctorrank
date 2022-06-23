@@ -1,6 +1,8 @@
 import {
     Register,
     ConfirmEmail,
+    SendPasswordResetEmail,
+    ResetPassword,
     Login,
     LogOut,
     Refresh,
@@ -20,6 +22,8 @@ import {
 export {
     Register,
     ConfirmEmail,
+    SendPasswordResetEmail,
+    ResetPassword,
     Login,
     LogOut,
     Refresh,

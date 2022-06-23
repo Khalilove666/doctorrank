@@ -12,7 +12,7 @@
             ></v-progress-linear>
             <div v-if="success" class="d-flex flex-column mt-4">
                 <v-alert type="success" transition="scale-transition">Email confirmed successfully!</v-alert>
-                <router-link to="/login" class="mt-4 btn-text align-self-center">Go to login</router-link>
+                <router-link to="/login" replace class="mt-4 btn-text align-self-center">Go to login</router-link>
             </div>
             <v-alert v-if="error.exist" class="mt-4" type="error" transition="scale-transition">{{error.text}}</v-alert>
         </v-card>
