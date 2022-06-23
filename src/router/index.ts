@@ -1,4 +1,4 @@
-import {createRouter, createWebHashHistory, createWebHistory} from "vue-router";
+import {createRouter, createWebHistory} from "vue-router";
 
 import Home from '../pages/Home.vue';
 import Login from '../pages/Login.vue';
@@ -8,6 +8,8 @@ import Doctors from '../pages/Doctors.vue';
 import DoctorPage from '../pages/DoctorPage.vue';
 import About from '../pages/About.vue';
 import ProfileActivation from "../pages/ProfileActivation.vue";
+import ForgotPassword from "../pages/ForgotPassword.vue";
+import ResetPassword from "../pages/ResetPassword.vue";
 import {useUser} from "../store/user";
 
 const routes = [
@@ -37,6 +39,16 @@ const routes = [
         component: ProfileActivation
     },
     {
+        path: "/forgot-password",
+        name: "forgotPassword",
+        component: ForgotPassword
+    },
+    {
+        path: "/reset-password",
+        name: "resetPassword",
+        component: ResetPassword
+    },
+    {
         path: "/profile",
         name: "profile",
         component: Profile
@@ -60,9 +72,9 @@ export const router = createRouter({
 
 router.beforeEach((to, from) => {
     const user = useUser();
-    if((to.name == "login" || to.name == "register") && user.loggedIn) {
+    if ((to.name == "login" || to.name == "register" || to.name == "forgotPassword" || to.name == "resetPassword") && user.loggedIn) {
         return {name: "home"}
-    } else if(to.name == "profile" && !user.loggedIn) {
+    } else if (to.name == "profile" && !user.loggedIn) {
         return {name: "login"}
     }
 })

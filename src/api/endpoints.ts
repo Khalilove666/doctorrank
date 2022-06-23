@@ -11,6 +11,14 @@ export async function ConfirmEmail(token: string) {
     return await performRequest("/activation?activationToken=" + token, "POST");
 }
 
+export async function SendPasswordResetEmail(login: string) {
+    return await performRequest("/password-reset?login=" + login, "GET");
+}
+
+export async function ResetPassword(token: string, new_password: string) {
+    return await performRequest("/password-reset?pswResetToken=" + token, "POST", {new_password});
+}
+
 export async function Login(user: LoginDTO) {
     return await requestWithCredentials("/login", "POST", user);
 }

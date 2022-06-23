@@ -31,12 +31,20 @@
                 </div>
                 <v-row class="mt-1">
                     <v-col cols="12" sm="6">
-                        <v-text-field :readonly="!editingUser" label="First Name" variant="outlined" density="compact"
-                                      hide-details></v-text-field>
+                        <v-text-field :readonly="!editingUser"
+                                      label="First Name"
+                                      variant="outlined"
+                                      density="compact"
+                                      hide-details
+                        ></v-text-field>
                     </v-col>
                     <v-col cols="12" sm="6">
-                        <v-text-field :readonly="!editingUser" label="Last Name" variant="outlined" density="compact"
-                                      hide-details></v-text-field>
+                        <v-text-field :readonly="!editingUser"
+                                      label="Last Name"
+                                      variant="outlined"
+                                      density="compact"
+                                      hide-details
+                        ></v-text-field>
                     </v-col>
                 </v-row>
                 <p class="text-h5 mt-4">Contacts</p>
@@ -431,7 +439,7 @@ import {Cropper} from 'vue-advanced-cropper'
 import 'vue-advanced-cropper/dist/style.css';
 import {useImage} from "../composables/image";
 import {ChangeRole, CreateOrUpdateDoctor, CreateProfession, FetchDoctorByAuth, LogOut, UploadUserAvatar} from "../api";
-import {Doctor, DoctorDTO} from "../dtos";
+import {Doctor, DoctorDTO, User} from "../dtos";
 import {router} from "../router";
 
 enum Dialog {Avatar, DoctorAvatar, Hospital, Profession}
@@ -471,7 +479,20 @@ const dialog = reactive({
     error: {exist: false, text: ""},
     title: "",
     type: Dialog.Avatar,
-})
+});
+
+let initialUser: User = {
+    _id: "",
+    first_name: "",
+    last_name: "",
+    email: "",
+    username: "",
+    role: "",
+    img: "",
+    created_at: 0,
+    updated_at: 0
+}
+
 let initialDoctor: Doctor = {
     _id: "",
     user_id: "",
@@ -540,6 +561,7 @@ onMounted(async () => {
     const res = await FetchDoctorByAuth();
     if (res.ok && res.data) {
         doctor.value = res.data;
+        initialUser = userStore.user;
         initialDoctor = res.data;
     }
 })

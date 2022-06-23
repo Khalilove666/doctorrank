@@ -49,7 +49,7 @@
                         color="accent"
                         hide-details
                     ></v-checkbox>
-                    <router-link to="/register" class="mt-1 text-decoration-underline text-accent">
+                    <router-link to="/forgot-password" class="mt-1 text-decoration-underline text-accent">
                         {{ $t('forgot_password') }}
                     </router-link>
                 </div>
