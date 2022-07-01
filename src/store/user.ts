@@ -11,8 +11,9 @@ export const useUser = defineStore("user", () => {
         username: "",
         role: "",
         img: "",
+        contact: {email: "", facebook: "", phone: ""},
         created_at: 0,
-        updated_at: 0,
+        updated_at: 0
     }
     // STATE
     let userState = ref<User>(getStoredState(defaultUser));
@@ -42,6 +43,27 @@ export const useUser = defineStore("user", () => {
         updateLocalState();
     }
 
+    function updateUser(fieldName: string, value: string) {
+        switch (fieldName) {
+            case "first_name":
+                userState.value.first_name = value;
+                break;
+            case "last_name":
+                userState.value.last_name = value;
+                break;
+            case "contact_email":
+                userState.value.contact.email = value;
+                break;
+            case "contact_phone":
+                userState.value.contact.phone = value;
+                break;
+            case "contact_facebook":
+                userState.value.contact.facebook = value;
+                break;
+        }
+        updateLocalState();
+    }
+
     function setToken(token: string) {
         tokenState.value = token;
     }
@@ -64,6 +86,7 @@ export const useUser = defineStore("user", () => {
         role,
         setUser,
         setUserImg,
+        updateUser,
         setToken,
         deleteUser,
         changeRole,

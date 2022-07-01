@@ -6,6 +6,11 @@ export interface User {
     username: string
     role: string
     img: string
+    contact: {
+        email: string
+        phone: string
+        facebook: string
+    }
     token?: string
     created_at: number
     updated_at: number
@@ -54,6 +59,7 @@ export interface Doctor {
 }
 
 export interface Experience {
+    _id: string,
     profession: string,
     hospital: string,
     field: string,
@@ -63,6 +69,7 @@ export interface Experience {
 }
 
 export interface Education {
+    _id: string,
     degree: string,
     major: string,
     institution: string,

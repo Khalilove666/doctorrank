@@ -1,5 +1,13 @@
 import performRequest, {requestWithCredentials} from "./client";
-import {CommentReqDTO, DoctorDTO, LoginDTO, RegisterDTO} from "../dtos";
+import {
+    CommentReqDTO,
+    DoctorEducationUpdateDTO,
+    DoctorExperienceUpdateDTO,
+    DoctorUpdateDTO,
+    LoginDTO,
+    RegisterDTO,
+    UserUpdateDTO
+} from "../dtos";
 
 
 // USER
@@ -17,6 +25,10 @@ export async function SendPasswordResetEmail(login: string) {
 
 export async function ResetPassword(token: string, new_password: string) {
     return await performRequest("/password-reset?pswResetToken=" + token, "POST", {new_password});
+}
+
+export async function ChangePassword(old_password: string, new_password: string) {
+    return await performRequest("/password", "PUT", {old_password, new_password});
 }
 
 export async function Login(user: LoginDTO) {
@@ -39,9 +51,25 @@ export async function UploadUserAvatar(data: FormData, handleUploadProgress: (e:
     return await performRequest("/avatar", "PUT", data, handleUploadProgress);
 }
 
+export async function UpdateUser(update: UserUpdateDTO) {
+    return await performRequest("/update", "PUT", update);
+}
+
 // DOCTORS
-export async function CreateOrUpdateDoctor(doctor: DoctorDTO) {
-    return await performRequest("/doctors", "PUT", doctor);
+export async function UpdateDoctor(update: DoctorUpdateDTO) {
+    return await performRequest("/doctors/update", "PUT", update);
+}
+
+export async function UploadDoctorAvatar(data: FormData, handleUploadProgress: (e: any) => void) {
+    return await performRequest("/doctors/avatar", "PUT", data, handleUploadProgress);
+}
+
+export async function UpdateDoctorExperience(update: DoctorExperienceUpdateDTO) {
+    return await performRequest("/doctors/update/experience", "PUT", update);
+}
+
+export async function UpdateDoctorEducation(update: DoctorEducationUpdateDTO) {
+    return await performRequest("/doctors/update/education", "PUT", update);
 }
 
 export async function FetchAllDoctors(term: string, skip: number, limit: number) {
@@ -76,4 +104,17 @@ export async function FetchAllProfessions() {
 
 export async function CreateProfession(name: string) {
     return await performRequest("/professions", "POST", {name});
+}
+
+// HOSPITALS
+export async function FetchAllHospitals() {
+    return await performRequest("/hospitals", "GET");
+}
+
+export async function CreateHospital(name: string) {
+    return await performRequest("/hospitals", "POST", {name});
+}
+
+export async function UploadHospitalAvatar(hospitalId: string, data: FormData, handleUploadProgress: (e: any) => void) {
+    return await performRequest("/hospitals/" + hospitalId + "/avatar", "PUT", data, handleUploadProgress);
 }
