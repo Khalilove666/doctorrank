@@ -12,7 +12,7 @@ export default async function performRequest(
     handleUploadProgress = function (e: any) {
     },
     tries = 0
-): Promise<any> {
+): Promise<{ ok: boolean, status: number, data?: any, error?: any }> {
     const userStore = useUser();
     const options = {
         url: BASE_URL + url,

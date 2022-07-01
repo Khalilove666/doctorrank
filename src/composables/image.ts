@@ -13,8 +13,14 @@ export function useImage() {
     const userAvatar = computed(() => userStore.user.img ? getFullImgUrl("/user/avatar/" + userStore.user.img) : avatarPlaceHolder)
     const userThumbnail = computed(() => userStore.user.img ? getFullImgUrl("/user/thumbnail/" + userStore.user.img) : avatarPlaceHolder)
 
+
+    function doctorAvatar(imgName: string) {
+        return imgName ? getFullImgUrl("/doctor/thumbnail/" + imgName) : avatarPlaceHolder
+    }
+
     return {
         userAvatar,
         userThumbnail,
+        doctorAvatar,
     }
 }

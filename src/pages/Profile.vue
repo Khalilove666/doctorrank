@@ -1,359 +1,209 @@
 <template>
-    <div>
-        <div class="pt-2 d-flex justify-space-between">
-            <h1>{{ role }}'s Profile</h1>
-            <v-btn @click="handleLogOut()" class="bg-accent text-white-text" icon="mdi-logout"
-                   size="small"></v-btn>
-        </div>
-        <v-row class="mt-2">
-            <v-col cols="12" md="3">
-                <div class="d-flex position-relative justify-end full-height">
-                    <img :src="image.userAvatar.value" alt="avatar"
-                         class="material-card full-width full-height prevent-user-select"/>
-                    <v-btn
-                        color="accent"
-                        dark
-                        @click="showDialog(Dialog.Avatar)"
-                        icon="mdi-image-edit-outline"
-                        class="position-absolute mt-2 mr-2"
-                        size="x-small"
-                    ></v-btn>
-                </div>
-            </v-col>
-            <v-col cols="12" md="9">
-                <div class="d-flex justify-space-between">
-                    <div class="full-width">
-                        <p class="text-h5">Base info</p>
-                        <v-divider></v-divider>
-                    </div>
-                    <v-btn v-if="!editingUser" @click="editingUser = true" icon="mdi-account-edit-outline"
-                           size="x-small" class="bg-accent text-white-text"></v-btn>
-                </div>
-                <v-row class="mt-1">
-                    <v-col cols="12" sm="6">
-                        <v-text-field :readonly="!editingUser"
-                                      label="First Name"
-                                      variant="outlined"
-                                      density="compact"
-                                      hide-details
-                        ></v-text-field>
-                    </v-col>
-                    <v-col cols="12" sm="6">
-                        <v-text-field :readonly="!editingUser"
-                                      label="Last Name"
-                                      variant="outlined"
-                                      density="compact"
-                                      hide-details
-                        ></v-text-field>
-                    </v-col>
-                </v-row>
-                <p class="text-h5 mt-4">Contacts</p>
-                <v-divider></v-divider>
-                <v-row class="mt-1">
-                    <v-col cols="12" md="4">
-                        <v-text-field :readonly="!editingUser" label="Email" variant="outlined" density="compact"
-                                      hide-details></v-text-field>
-                    </v-col>
-                    <v-col cols="12" md="4">
-                        <v-text-field :readonly="!editingUser" label="Phone" variant="outlined" density="compact"
-                                      hide-details></v-text-field>
-                    </v-col>
-                    <v-col cols="12" md="4">
-                        <v-text-field :readonly="!editingUser" label="Facebook" variant="outlined" density="compact"
-                                      hide-details></v-text-field>
-                    </v-col>
-                </v-row>
-                <v-btn v-if="editingUser" @click="handleUserSave()" class="mt-2" color="accent" block>SAVE USER INFO
-                </v-btn>
-            </v-col>
-        </v-row>
+    <div class="pt-2 d-flex justify-space-between">
+        <h1>Public Profile</h1>
+        <v-btn @click="handleLogOut()" class="bg-accent text-white-text" icon="mdi-logout"
+               size="small"></v-btn>
     </div>
-    <v-divider class="mt-4"></v-divider>
-    <v-btn v-if="role==='user'" @click="handleChangeRole()" class="bg-accent text-white-text mt-4" block>
-        CHANGE TO DOCTOR PROFILE
-    </v-btn>
-    <div v-else class="doctor-info">
-        <h1 class="mt-4">Public Information</h1>
-        <v-row class="mt-2">
-            <v-col cols="12" md="3">
-                <div class="d-flex position-relative justify-end full-height">
-                    <img :src="image.userAvatar.value" alt="avatar"
-                         class="material-card full-width full-height prevent-user-select"/>
-                    <v-btn
-                        color="accent"
-                        dark
-                        @click="showDialog(Dialog.DoctorAvatar)"
-                        icon="mdi-image-edit-outline"
-                        class="position-absolute mt-2 mr-2"
-                        size="x-small"
-                    ></v-btn>
-                </div>
-            </v-col>
-            <v-col cols="12" md="9">
-                <div class="d-flex justify-space-between">
-                    <div class="full-width">
+    <v-tabs v-model="tab" color="accent">
+        <v-tab value="one">User info</v-tab>
+        <v-tab value="two">Doctor info</v-tab>
+    </v-tabs>
+    <v-window v-model="tab" style="overflow: visible">
+        <v-window-item value="one">
+            <v-row class="mt-2">
+                <v-col cols="12" md="6" lg="3">
+                    <div class="d-flex position-relative justify-end full-height">
+                        <img :src="image.userAvatar.value"
+                             alt="avatar"
+                             class="material-card full-width full-height prevent-user-select"
+                        />
+                        <v-btn
+                            color="accent"
+                            dark
+                            @click="showDialog(Dialog.Avatar)"
+                            icon="mdi-image-edit-outline"
+                            class="position-absolute mt-2 mr-2"
+                            size="x-small"
+                        ></v-btn>
+                    </div>
+                </v-col>
+                <v-col cols="12" md="6" lg="3">
+                    <p class="text-h5">Base info</p>
+                    <v-divider></v-divider>
+                    <EditField class="mt-4" v-model="user.first_name" label="First Name"
+                               @save="handleUserSave('first_name', $event)"/>
+                    <EditField class="mt-4" v-model="user.last_name" label="Last Name"
+                               @save="handleUserSave('last_name', $event)"/>
+                </v-col>
+                <v-col cols="12" md="6" lg="3">
+                    <p class="text-h5">Contacts</p>
+                    <v-divider></v-divider>
+                    <EditField class="mt-4" v-model="user.contact_email" label="Email"
+                               @save="handleUserSave('contact_email', $event)"/>
+                    <EditField class="mt-4" v-model="user.contact_phone" label="Phone"
+                               @save="handleUserSave('contact_phone', $event)"/>
+                    <EditField class="mt-4" v-model="user.contact_facebook" label="Facebook"
+                               @save="handleUserSave('contact_facebook', $event)"/>
+                </v-col>
+                <v-col cols="12" md="6" lg="3">
+                    <p class="text-h5">Change Password</p>
+                    <v-divider></v-divider>
+                    <ChangePassword class="mt-4"/>
+                </v-col>
+            </v-row>
+        </v-window-item>
+        <v-window-item value="two">
+            <v-btn v-if="role==='user'" @click="handleChangeRole()" class="bg-accent text-white-text mt-4" block>
+                CHANGE TO DOCTOR PROFILE
+            </v-btn>
+            <div v-else class="doctor-info">
+                <v-row class="mt-2">
+                    <v-col cols="12" md="6" lg="3">
+                        <div class="d-flex position-relative justify-end full-height">
+                            <img :src="doctorAvatar" alt="avatar"
+                                 class="material-card full-width full-height prevent-user-select"/>
+                            <v-btn
+                                color="accent"
+                                dark
+                                @click="showDialog(Dialog.DoctorAvatar)"
+                                icon="mdi-image-edit-outline"
+                                class="position-absolute mt-2 mr-2"
+                                size="x-small"
+                            ></v-btn>
+                        </div>
+                    </v-col>
+                    <v-col cols="12" md="6" lg="3">
                         <p class="text-h5">Base info</p>
                         <v-divider></v-divider>
-                    </div>
-                    <v-btn v-if="!editingDoctor" @click="editingDoctor = true" icon="mdi-pencil-outline"
-                           size="x-small" class="bg-accent text-white-text"></v-btn>
-                </div>
-                <v-row class="mt-1">
-                    <v-col cols="12" sm="2">
-                        <v-text-field v-model="doctor.title" :readonly="!editingDoctor" label="Title"
-                                      placeholder="Example: 'Dr.', 'Uzm.Dr.'"
-                                      variant="outlined"
-                                      density="compact"
-                                      hide-details></v-text-field>
+                        <EditField class="mt-4" v-model="doctor.title" label="Title"
+                                   @save="handleDoctorSave('title', doctor.title, $event)"/>
+                        <EditField class="mt-4" v-model="doctor.first_name" label="First Name"
+                                   @save="handleDoctorSave('first_name', doctor.first_name, $event)"/>
+                        <EditField class="mt-4" v-model="doctor.last_name" label="Last Name"
+                                   @save="handleDoctorSave('last_name', doctor.last_name, $event)"/>
                     </v-col>
-                    <v-col cols="12" sm="5">
-                        <v-text-field v-model="doctor.first_name" :readonly="!editingDoctor" label="First Name"
-                                      variant="outlined"
-                                      density="compact"
-                                      hide-details></v-text-field>
+                    <v-col cols="12" md="6" lg="3">
+                        <p class="text-h5">Contacts</p>
+                        <v-divider></v-divider>
+                        <EditField class="mt-4" v-model="doctor.contact.email" label="Email"
+                                   @save="handleDoctorSave('contact_email', doctor.contact.email, $event)"/>
+                        <EditField class="mt-4" v-model="doctor.contact.phone" label="Phone"
+                                   @save="handleDoctorSave('contact_phone', doctor.contact.phone, $event)"/>
+                        <EditField class="mt-4" v-model="doctor.contact.facebook" label="Facebook"
+                                   @save="handleDoctorSave('contact_facebook', doctor.contact.facebook, $event)"/>
                     </v-col>
-                    <v-col cols="12" sm="5">
-                        <v-text-field v-model="doctor.last_name" :readonly="!editingDoctor" label="Last Name"
-                                      variant="outlined"
-                                      density="compact"
-                                      hide-details></v-text-field>
-                    </v-col>
-                </v-row>
-                <p class="text-h5 mt-4">Contacts</p>
-                <v-divider></v-divider>
-                <v-row class="mt-1">
-                    <v-col cols="12" md="4">
-                        <v-text-field v-model="doctor.contact.email" :readonly="!editingDoctor" label="Email"
-                                      variant="outlined" density="compact"
-                                      hide-details></v-text-field>
-                    </v-col>
-                    <v-col cols="12" md="4">
-                        <v-text-field v-model="doctor.contact.phone" :readonly="!editingDoctor" label="Phone"
-                                      variant="outlined" density="compact"
-                                      hide-details></v-text-field>
-                    </v-col>
-                    <v-col cols="12" md="4">
-                        <v-text-field v-model="doctor.contact.facebook" :readonly="!editingDoctor" label="Facebook"
-                                      variant="outlined"
-                                      density="compact"
-                                      hide-details></v-text-field>
-                    </v-col>
-                </v-row>
-                <p class="text-h5 mt-4">About</p>
-                <v-divider></v-divider>
-                <div class="mt-2">
-                    <v-textarea v-model="doctor.about" :readonly="!editingDoctor" color="accent"
+                    <v-col cols="12" md="6" lg="3">
+                        <p class="text-h5">About</p>
+                        <v-divider></v-divider>
+                        <div class="mt-2">
+                            <EditField
+                                v-model="doctor.about"
                                 label="Detailed information about you"
-                                hide-details></v-textarea>
-                </div>
-            </v-col>
-        </v-row>
-        <v-row>
-            <v-col cols="12" md="6">
-                <p class="text-h5 mt-4">Profession</p>
-                <v-divider></v-divider>
-                <div v-if="editingDoctor" class="mt-2">
-                    <v-text-field v-model="doctor.profession._id" :readonly="!editingDoctor"
-                                  label="Profession ID FOR NOW" variant="outlined"
-                                  density="compact"
-                                  hide-details></v-text-field>
-                    <!--                    <v-autocomplete-->
-                    <!--                        density="compact"-->
-                    <!--                        chips-->
-                    <!--                        small-chips-->
-                    <!--                        label="Select your profession"-->
-                    <!--                        clearable-->
-                    <!--                        variant="outlined"-->
-                    <!--                        color="accent"-->
-                    <!--                        hide-details-->
-                    <!--                    ></v-autocomplete>-->
-                    <p class="btn-text mt-1" @click="showDialog(Dialog.Profession)">Add profession if it is not existing
-                        in the list above.</p>
-                </div>
-                <v-chip v-else class="mt-2" color="pink" label text-color="white">
-                    <v-icon start icon="mdi-label"></v-icon>
-                    {{ doctor.profession.name }}
-                </v-chip>
-            </v-col>
-            <v-col cols="12" md="6">
-                <p class="text-h5 mt-4">Current Hospital You Work</p>
-                <v-divider></v-divider>
-                <div v-if="editingDoctor" class="mt-2">
-                    <v-text-field v-model="doctor.hospital._id" :readonly="!editingDoctor" label="Hospital ID FOR NOW"
-                                  variant="outlined"
-                                  density="compact"
-                                  hide-details></v-text-field>
-                    <!--                    <v-autocomplete-->
-                    <!--                        density="compact"-->
-                    <!--                        chips-->
-                    <!--                        small-chips-->
-                    <!--                        label="Select Hospital you currently work"-->
-                    <!--                        clearable-->
-                    <!--                        variant="outlined"-->
-                    <!--                        color="accent"-->
-                    <!--                        hide-details-->
-                    <!--                    ></v-autocomplete>-->
-                    <p class="btn-text mt-1" @click="showDialog(Dialog.Hospital)">Add hospital if it is not existing in
-                        the list above.</p>
-                </div>
-                <v-chip v-else v-ripple class="mt-2" color="accent" variant="outlined">
-                    <v-avatar left>
-                        <v-img :src="doctor.hospital.img"></v-img>
-                    </v-avatar>
-                    {{ doctor.hospital.name }}
-                </v-chip>
-            </v-col>
-            <v-col cols="12" md="6">
-                <p class="text-h5 mt-4">Experience</p>
-                <v-divider></v-divider>
-                <div class="mt-2">
-                    <v-row v-if="doctor.experience?.length">
-                        <v-col cols="12" md="6" v-for="(experience, index) in doctor.experience">
-                            <v-card width="100%" color="transparent" class="pa-2">
-                                <div v-if="editingDoctor">
-                                    <div class="d-flex justify-space-between align-center">
-                                        <p>No: {{ index + 1 }}</p>
-                                        <v-btn
-                                            class="text-white-text"
-                                            color="red"
-                                            icon="mdi-delete"
-                                            size="x-small"
-                                            @click="removeExperience(index)"
-                                        ></v-btn>
-                                    </div>
-                                    <v-text-field v-model="experience.profession" class="mt-2" label="Profession"
-                                                  variant="outlined"
-                                                  density="compact"
-                                                  hide-details></v-text-field>
-                                    <v-text-field v-model="experience.hospital" class="mt-2" label="Hospital"
-                                                  variant="outlined" density="compact"
-                                                  hide-details></v-text-field>
-                                    <v-text-field v-model="experience.field" class="mt-2" label="Field"
-                                                  variant="outlined"
-                                                  density="compact"
-                                                  hide-details></v-text-field>
-                                    <v-text-field v-model="experience.term_start" class="mt-2" label="Term Start"
-                                                  variant="outlined" density="compact"
-                                                  hide-details></v-text-field>
-                                    <v-text-field v-model="experience.term_end" class="mt-2" label="Term End"
-                                                  variant="outlined" density="compact"
-                                                  hide-details></v-text-field>
-                                    <v-text-field v-model="experience.country" class="mt-2" label="Country"
-                                                  variant="outlined" density="compact"
-                                                  hide-details></v-text-field>
-                                </div>
-                                <div v-else>
-                                    <p>No: {{ index + 1 }}</p>
-                                    <table>
-                                        <tr>
-                                            <td>Profession:</td>
-                                            <td><b>{{ experience.profession }}</b></td>
-                                        </tr>
-                                        <tr>
-                                            <td>Hospital:</td>
-                                            <td><b>{{ experience.hospital }}</b></td>
-                                        </tr>
-                                        <tr>
-                                            <td>Term Start:</td>
-                                            <td><b>{{ experience.term_start }}</b></td>
-                                        </tr>
-                                        <tr>
-                                            <td>Term End:</td>
-                                            <td><b>{{ experience.term_end }}</b></td>
-                                        </tr>
-                                        <tr>
-                                            <td>Country:</td>
-                                            <td><b>{{ experience.country }}</b></td>
-                                        </tr>
-                                    </table>
-                                </div>
-                            </v-card>
-                        </v-col>
-                    </v-row>
-                    <p v-if="editingDoctor" class="btn-text" @click="addExperience()" block>Add new Experience</p>
-                </div>
-            </v-col>
-            <v-col cols="12" md="6">
-                <p class="text-h5 mt-4">Education</p>
-                <v-divider></v-divider>
-                <div class="mt-2">
-                    <v-row v-if="doctor.education?.length">
-                        <v-col cols="12" md="6" v-for="(education, index) in doctor.education">
-                            <v-card width="100%" color="transparent" class="pa-2">
-                                <div v-if="editingDoctor">
-                                    <div class="d-flex justify-space-between align-center">
-                                        <p>No: {{ index + 1 }}</p>
-                                        <v-btn
-                                            class="text-white-text"
-                                            color="red"
-                                            icon="mdi-delete"
-                                            size="x-small"
-                                            @click="removeEducation(index)"
-                                        ></v-btn>
-                                    </div>
-                                    <v-text-field v-model="education.degree" class="mt-2" label="Degree"
-                                                  variant="outlined"
-                                                  density="compact"
-                                                  hide-details></v-text-field>
-                                    <v-text-field v-model="education.major" class="mt-2" label="Major"
-                                                  variant="outlined"
-                                                  density="compact"
-                                                  hide-details></v-text-field>
-                                    <v-text-field v-model="education.institution" class="mt-2" label="Institution"
-                                                  variant="outlined" density="compact"
-                                                  hide-details></v-text-field>
-                                    <v-text-field v-model="education.term_start" class="mt-2" label="Term Start"
-                                                  variant="outlined" density="compact"
-                                                  hide-details></v-text-field>
-                                    <v-text-field v-model="education.term_end" class="mt-2" label="Term End"
-                                                  variant="outlined" density="compact"
-                                                  hide-details></v-text-field>
-                                    <v-text-field v-model="education.country" class="mt-2" label="Country"
-                                                  variant="outlined" density="compact"
-                                                  hide-details></v-text-field>
-                                </div>
-                                <div v-else>
-                                    <p>No: {{ index + 1 }}</p>
-                                    <table>
-                                        <tr>
-                                            <td>Major:</td>
-                                            <td><b>{{ education.major }}</b></td>
-                                        </tr>
-                                        <tr>
-                                            <td>Institution:</td>
-                                            <td><b>{{ education.institution }}</b></td>
-                                        </tr>
-                                        <tr>
-                                            <td>Term Start:</td>
-                                            <td><b>{{ education.term_start }}</b></td>
-                                        </tr>
-                                        <tr>
-                                            <td>Term End:</td>
-                                            <td><b>{{ education.term_end }}</b></td>
-                                        </tr>
-                                        <tr>
-                                            <td>Country:</td>
-                                            <td><b>{{ education.country }}</b></td>
-                                        </tr>
-                                    </table>
-                                </div>
-                            </v-card>
-                        </v-col>
-                    </v-row>
-                    <p v-if="editingDoctor" class="btn-text" @click="addEducation()">Add Education</p>
-                </div>
-            </v-col>
-        </v-row>
-        <v-progress-linear
-            :active="updatingDoctor"
-            indeterminate
-            rounded
-            color="accent"
-            class="mt-4"
-        ></v-progress-linear>
-        <v-btn v-if="editingDoctor" @click="handleDoctorSave()" class="mt-2" color="accent" block>SAVE ALL</v-btn>
-        <v-btn v-if="editingDoctor" @click="cancelEditingDoctor()" class="mt-2" color="accent" block>CANCEL</v-btn>
-    </div>
+                                :textarea="true"
+                                @save="handleDoctorSave('about', doctor.about, $event)"
+                            />
+                        </div>
+                    </v-col>
+                    <v-col cols="12" md="6" lg="3">
+                        <p class="text-h5 mt-4">Profession</p>
+                        <v-divider></v-divider>
+                        <div v-if="editingProfession" class="mt-2">
+                            <v-text-field
+                                v-model="profession._id"
+                                label="Profession ID FOR NOW" variant="outlined"
+                                density="compact"
+                                hide-details
+                            ></v-text-field>
+                            <div class="d-flex justify-end mt-2">
+                                <v-btn @click="handleProfessionCancel()"
+                                       color="accent"
+                                       variant="outlined">cancel
+                                </v-btn>
+                                <v-btn @click="handleProfessionUpdate()" color="accent" class="ms-2">save</v-btn>
+                            </div>
+                            <p class="btn-text mt-1"
+                               @click="showDialog(Dialog.Profession)">
+                                Add profession if it is not existing in the list above.
+                            </p>
+                        </div>
+                        <div v-else class="mt-2 d-flex justify-space-between">
+                            <v-chip color="pink" label text-color="white">
+                                <v-icon start icon="mdi-label"></v-icon>
+                                {{ profession.name }}
+                            </v-chip>
+                            <button @click="editingProfession = true" class="btn-text">Edit</button>
+                        </div>
+                    </v-col>
+                    <v-col cols="12" md="6" lg="3">
+                        <p class="text-h5 mt-4">Current Hospital You Work</p>
+                        <v-divider></v-divider>
+                        <div v-if="editingHospital" class="mt-2">
+                            <v-text-field v-model="hospital._id"
+                                          label="Hospital ID FOR NOW"
+                                          variant="outlined"
+                                          density="compact"
+                                          hide-details>
+                            </v-text-field>
+                            <div class="d-flex justify-end mt-2">
+                                <v-btn @click="handleHospitalCancel()" color="accent" variant="outlined">cancel</v-btn>
+                                <v-btn @click="handleHospitalUpdate()" color="accent" class="ms-2">save</v-btn>
+                            </div>
+                            <p class="btn-text mt-1"
+                               @click="showDialog(Dialog.Hospital)"
+                            >Add hospital if it is not existing in the list above.
+                            </p>
+                        </div>
+                        <div v-else class="mt-2 d-flex justify-space-between">
+                            <v-chip v-ripple color="accent" variant="outlined">
+                                <v-avatar left>
+                                    <v-img :src="hospital.img"></v-img>
+                                </v-avatar>
+                                {{ hospital.name }}
+                            </v-chip>
+                            <button @click="editingHospital = true" class="btn-text">Edit</button>
+                        </div>
+                    </v-col>
+                    <v-col cols="12" md="6" lg="3">
+                        <p class="text-h5 mt-4">Experience</p>
+                        <v-divider></v-divider>
+                        <div class="mt-2">
+                            <v-row v-if="doctor.experience?.length">
+                                <v-col cols="12" v-for="(experience, index) in doctor.experience" :key="index">
+                                    <EditExperience :experience="experience"
+                                                    :index="index"
+                                                    @save="updateExperience($event, index)"
+                                                    @remove="removeExperience(index)"
+                                                    @success="showSuccessSnackbar()"
+                                                    @error="showErrorSnackbar($event)"
+                                    />
+                                </v-col>
+                            </v-row>
+                            <p class="btn-text" @click="addExperience()">Add Experience</p>
+                        </div>
+                    </v-col>
+                    <v-col cols="12" md="6" lg="3">
+                        <p class="text-h5 mt-4">Education</p>
+                        <v-divider></v-divider>
+                        <div class="mt-2">
+                            <v-row v-if="doctor.education?.length">
+                                <v-col cols="12" v-for="(education, index) in doctor.education">
+                                    <EditEducation
+                                        :education="education"
+                                        :index="index"
+                                        @save="updateEducation($event, index)"
+                                        @remove="removeEducation(index)"
+                                        @success="showSuccessSnackbar()"
+                                        @error="showErrorSnackbar($event)"
+                                    />
+                                </v-col>
+                            </v-row>
+                            <p class="btn-text" @click="addEducation()">Add Education</p>
+                        </div>
+                    </v-col>
+                </v-row>
+            </div>
+        </v-window-item>
+    </v-window>
     <v-dialog
         v-model="dialog.show"
         fullscreen
@@ -429,8 +279,9 @@
         </v-card>
     </v-dialog>
     <v-snackbar v-model="success.exist" timeout="2000" color="success" top>{{ success.text }}</v-snackbar>
+    <v-snackbar v-model="error.exist" timeout="4000" color="error" top>{{ error.text }}</v-snackbar>
+    <Progress v-if="loading"/>
 </template>
-
 <script setup lang="ts">
 import {useUser} from "../store/user";
 import {storeToRefs} from "pinia";
@@ -438,9 +289,21 @@ import {computed, onMounted, reactive, ref} from "vue";
 import {Cropper} from 'vue-advanced-cropper'
 import 'vue-advanced-cropper/dist/style.css';
 import {useImage} from "../composables/image";
-import {ChangeRole, CreateOrUpdateDoctor, CreateProfession, FetchDoctorByAuth, LogOut, UploadUserAvatar} from "../api";
-import {Doctor, DoctorDTO, User} from "../dtos";
+import {
+    ChangeRole, CreateHospital,
+    CreateProfession,
+    FetchDoctorByAuth,
+    LogOut, UpdateDoctor,
+    UpdateUser, UploadDoctorAvatar, UploadHospitalAvatar,
+    UploadUserAvatar
+} from "../api";
+import {Doctor, DoctorUpdateDTO, UserUpdateDTO} from "../dtos";
 import {router} from "../router";
+import EditField from "../components/EditField.vue";
+import ChangePassword from "../components/ChangePassword.vue";
+import EditExperience from "../components/EditExperience.vue";
+import EditEducation from "../components/EditEducation.vue";
+import Progress from "../components/Progress.vue";
 
 enum Dialog {Avatar, DoctorAvatar, Hospital, Profession}
 
@@ -455,24 +318,13 @@ const userStore = useUser();
 const image = useImage();
 const {role} = storeToRefs(userStore);
 
-
+const tab = ref("one");
 const imageToEdit = ref("");
 const professionName = ref("");
 const hospitalName = ref("");
-const editingUser = ref(false);
-const editingDoctor = ref(false);
-const updatingDoctor = ref(false);
-const file = ref<File>();
+const file = ref<File | null>();
 const imageCoordinates = ref<Coordinates>()
-const progress = reactive({
-    loaded: 0,
-});
-
-const success = reactive({
-    exist: false,
-    text: "",
-})
-
+const progress = reactive({loaded: 0});
 const dialog = reactive({
     show: false,
     loading: false,
@@ -481,17 +333,20 @@ const dialog = reactive({
     type: Dialog.Avatar,
 });
 
-let initialUser: User = {
-    _id: "",
+
+const editingProfession = ref(false);
+const editingHospital = ref(false);
+const loading = ref(false);
+const success = reactive({exist: false, text: ""});
+const error = reactive({exist: false, text: ""});
+
+const user = reactive({
     first_name: "",
     last_name: "",
-    email: "",
-    username: "",
-    role: "",
-    img: "",
-    created_at: 0,
-    updated_at: 0
-}
+    contact_email: "",
+    contact_phone: "",
+    contact_facebook: "",
+});
 
 let initialDoctor: Doctor = {
     _id: "",
@@ -506,11 +361,11 @@ let initialDoctor: Doctor = {
     about: "",
     profession: {
         _id: "",
-        name: "Nevropatoloq",
+        name: "",
     },
     hospital: {
         _id: "",
-        name: "Avrasiya Hospital",
+        name: "",
         img: "",
     },
     contact: {
@@ -518,30 +373,19 @@ let initialDoctor: Doctor = {
         phone: "",
         facebook: ""
     },
-    experience: [
-        {
-            profession: "Baş anestezioloq",
-            hospital: "",
-            field: "",
-            term_start: 0,
-            term_end: 0,
-            country: ""
-        }
-    ],
-    education: [
-        {
-            degree: "",
-            major: "",
-            institution: "",
-            term_start: 0,
-            term_end: 0,
-            country: ""
-        }
-    ],
+    experience: [],
+    education: [],
     created_at: 0,
     updated_at: 0
 };
 const doctor = ref<Doctor>(initialDoctor);
+const profession = reactive({_id: "", name: ""});
+const hospital = reactive({_id: "", name: "", img: ""});
+
+const doctorAvatar = computed(() => {
+    const imgName = doctor.value.img;
+    return image.doctorAvatar(imgName);
+});
 
 const dialogTitle = computed(() => {
     switch (dialog.type) {
@@ -556,13 +400,21 @@ const dialogTitle = computed(() => {
     }
 })
 
-
 onMounted(async () => {
+    user.first_name = userStore.user.first_name;
+    user.last_name = userStore.user.last_name;
+    user.contact_email = userStore.user.contact.email;
+    user.contact_phone = userStore.user.contact.phone;
+    user.contact_facebook = userStore.user.contact.facebook;
     const res = await FetchDoctorByAuth();
     if (res.ok && res.data) {
         doctor.value = res.data;
-        initialUser = userStore.user;
         initialDoctor = res.data;
+        profession._id = res.data.profession?._id;
+        profession.name = res.data.profession?.name;
+        hospital._id = res.data.hospital?._id;
+        hospital.name = res.data.hospital?.name;
+        hospital.img = res.data.hospital?.img;
     }
 })
 
@@ -570,6 +422,11 @@ onMounted(async () => {
 async function handleChangeRole() {
     const res = await ChangeRole();
     if (res.ok) userStore.changeRole("doctor");
+    const doctorRes = await FetchDoctorByAuth();
+    if (doctorRes.ok && doctorRes.data) {
+        doctor.value = res.data;
+        initialDoctor = res.data;
+    }
 }
 
 async function handleLogOut() {
@@ -578,38 +435,76 @@ async function handleLogOut() {
         userStore.deleteUser("logout_user_action");
         await router.replace("/login");
     }
-
 }
 
-async function handleUserSave() {
-    editingUser.value = false;
-}
-
-async function handleDoctorSave() {
-    const doctorDto: DoctorDTO = {
-        title: doctor.value.title,
-        first_name: doctor.value.first_name,
-        last_name: doctor.value.last_name,
-        about: doctor.value.about,
-        profession_id: doctor.value.profession._id,
-        hospital_id: doctor.value.hospital._id,
-        contact: doctor.value.contact,
-        experience: doctor.value.experience,
-        education: doctor.value.education,
-    }
-    updatingDoctor.value = true;
-    const res = await CreateOrUpdateDoctor(doctorDto);
+async function handleUserSave(fieldName: string, callback: any) {
+    const update: UserUpdateDTO = {field_name: fieldName, value: user[fieldName as keyof object]}
+    loading.value = true;
+    const res = await UpdateUser(update);
+    loading.value = false;
     if (res.ok) {
-        success.exist = true;
-        success.text = "Profile Updated Successfully!"
-        editingDoctor.value = false;
+        userStore.updateUser(fieldName, user[fieldName as keyof object]);
+        showSuccessSnackbar();
+        callback();
+    } else {
+        error.exist = true;
+        error.text = res.error;
     }
-    updatingDoctor.value = false;
+}
+
+async function handleDoctorSave(fieldName: string, value: string, callback: any) {
+    const update: DoctorUpdateDTO = {field_name: fieldName, value}
+    loading.value = true;
+    const res = await UpdateDoctor(update);
+    loading.value = false;
+    if (res.ok) {
+        showSuccessSnackbar();
+        callback();
+    } else {
+        error.exist = true;
+        error.text = res.error;
+    }
+}
+
+function handleProfessionUpdate() {
+    handleDoctorSave("profession_id", profession._id, () => {
+        editingProfession.value = false
+        doctor.value.profession = profession;
+    })
+}
+
+function handleProfessionCancel() {
+    profession._id = doctor.value.profession?._id;
+    profession.name = doctor.value.profession?.name;
+    editingProfession.value = false
+}
+
+function handleHospitalUpdate() {
+    handleDoctorSave("hospital_id", hospital._id, () => {
+        editingHospital.value = false
+        doctor.value.hospital = hospital;
+    });
+}
+
+function handleHospitalCancel() {
+    hospital._id = doctor.value.hospital?._id;
+    hospital.name = doctor.value.hospital?.name;
+    hospital.img = doctor.value.hospital?.img;
+    editingHospital.value = false
+}
+
+function updateExperience(value: any, index: number) {
+    doctor.value.experience[index] = value;
+}
+
+function updateEducation(value: any, index: number) {
+    doctor.value.education[index] = value;
 }
 
 function addExperience() {
     if (!doctor.value.experience) doctor.value.experience = [];
     doctor.value.experience.push({
+        _id: "-1",
         profession: "",
         hospital: "",
         field: "",
@@ -622,6 +517,7 @@ function addExperience() {
 function addEducation() {
     if (!doctor.value.education) doctor.value.education = [];
     doctor.value.education.push({
+        _id: "-1",
         degree: "",
         major: "",
         institution: "",
@@ -663,6 +559,8 @@ function showDialog(dialogType: Dialog) {
     success.exist = false;
     success.text = "";
     dialog.loading = false;
+    file.value = null;
+    imageToEdit.value = "";
 }
 
 async function handleDialogSave() {
@@ -671,8 +569,10 @@ async function handleDialogSave() {
             await handleUserAvatarChange();
             break;
         case Dialog.DoctorAvatar:
+            await handleDoctorAvatarChange();
             break;
         case Dialog.Hospital:
+            await handleCreateHospital();
             break;
         case Dialog.Profession:
             await handleCreateProfession();
@@ -686,20 +586,63 @@ async function handleUserAvatarChange() {
     data.append("coordinates", JSON.stringify(imageCoordinates.value));
     dialog.loading = true;
     const res = await UploadUserAvatar(data, (e: { loaded: number; total: number; }) => {
-        console.log("PROGRESS", (e.loaded * 100) / e.total);
         progress.loaded = (e.loaded * 100) / e.total;
     });
     dialog.loading = false;
     if (res.ok) {
-        success.exist = true;
         success.text = "Image uploaded successfully!";
         userStore.setUserImg(res.data);
         dialog.show = false;
+        success.exist = true;
     } else {
         dialog.error.exist = true;
         dialog.error.text = res.error;
     }
     imageToEdit.value = "";
+    file.value = null;
+}
+
+async function handleDoctorAvatarChange() {
+    const data = new FormData;
+    data.append("file", file.value as File);
+    data.append("coordinates", JSON.stringify(imageCoordinates.value));
+    dialog.loading = true;
+    const res = await UploadDoctorAvatar(data, (e: { loaded: number; total: number; }) => {
+        progress.loaded = (e.loaded * 100) / e.total;
+    });
+    dialog.loading = false;
+    if (res.ok) {
+        success.text = "Image uploaded successfully!";
+        doctor.value.img = res.data;
+        dialog.show = false;
+        success.exist = true;
+    } else {
+        dialog.error.exist = true;
+        dialog.error.text = res.error;
+    }
+    imageToEdit.value = "";
+    file.value = null;
+}
+
+async function handleHospitalAvatarUpload(hospitalId: string,) {
+    const data = new FormData;
+    data.append("file", file.value as File);
+    data.append("coordinates", JSON.stringify(imageCoordinates.value));
+    dialog.loading = true;
+    const res = await UploadHospitalAvatar(hospitalId, data, (e: { loaded: number; total: number; }) => {
+        progress.loaded = (e.loaded * 100) / e.total;
+    });
+    dialog.loading = false;
+    if (res.ok) {
+        success.text = "Image uploaded successfully!";
+        dialog.show = false;
+        success.exist = true;
+    } else {
+        dialog.error.exist = true;
+        dialog.error.text = res.error;
+    }
+    imageToEdit.value = "";
+    file.value = null;
 }
 
 async function handleCreateProfession() {
@@ -707,10 +650,22 @@ async function handleCreateProfession() {
     const res = await CreateProfession(professionName.value);
     dialog.loading = false;
     if (res.ok) {
-        success.exist = true;
-        success.text = "Profession added successfully!";
+        showSuccessSnackbar();
         // ADD PROFESSION TO PROFESSIONS
         dialog.show = false;
+    } else {
+        dialog.error.exist = true;
+        dialog.error.text = res.error;
+    }
+}
+
+async function handleCreateHospital() {
+    dialog.loading = true;
+    const res = await CreateHospital(hospitalName.value);
+    dialog.loading = false;
+    if (res.ok) {
+        await handleHospitalAvatarUpload(res.data);
+        // ADD PROFESSION TO PROFESSIONS
     } else {
         dialog.error.exist = true;
         dialog.error.text = res.error;
@@ -725,11 +680,17 @@ function handleDialogCancel() {
     dialog.loading = false;
 }
 
-function cancelEditingDoctor() {
-    doctor.value = initialDoctor;
-    editingDoctor.value = false;
+function showSuccessSnackbar() {
+    success.exist = true;
+    success.text = "Operation successful !";
+}
+
+function showErrorSnackbar(message: string) {
+    error.exist = true;
+    error.text = message;
 }
 </script>
+
 
 <style scoped lang="scss">
 @import "../styles/variables";
