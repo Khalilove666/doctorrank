@@ -1,23 +1,22 @@
 <template>
     <v-icon
-        @click="theme.toggleTheme()"
-        :icon="bool ? 'mdi-white-balance-sunny' : 'mdi-weather-night'"
         v-ripple
+        :icon="bool ? 'mdi-white-balance-sunny' : 'mdi-weather-night'"
         size="large"
         class="round-btn cursor-pointer"
-        :class="bool ? 'day': 'night'"
+        :class="bool ? 'day' : 'night'"
+        @click="theme.toggleTheme()"
     ></v-icon>
 </template>
 
 <script setup lang="ts">
-import {computed} from "vue";
-import {useThemeAndLang} from "../store/theme";
+import { computed } from "vue";
+import { useThemeAndLang } from "../store/theme";
 
 const theme = useThemeAndLang();
 const bool = computed(() => {
-    return theme.currentTheme == "lightTheme"
-})
-
+    return theme.currentTheme == "lightTheme";
+});
 </script>
 
 <style scoped lang="scss">

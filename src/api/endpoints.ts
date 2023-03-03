@@ -1,4 +1,5 @@
-import performRequest, {requestWithCredentials} from "./client";
+/* eslint-disable no-unused-vars */
+import performRequest, { requestWithCredentials } from "./client";
 import {
     CommentReqDTO,
     DoctorEducationUpdateDTO,
@@ -6,9 +7,8 @@ import {
     DoctorUpdateDTO,
     LoginDTO,
     RegisterDTO,
-    UserUpdateDTO
+    UserUpdateDTO,
 } from "../dtos";
-
 
 // USER
 export async function Register(user: RegisterDTO) {
@@ -24,11 +24,11 @@ export async function SendPasswordResetEmail(login: string) {
 }
 
 export async function ResetPassword(token: string, new_password: string) {
-    return await performRequest("/password-reset?pswResetToken=" + token, "POST", {new_password});
+    return await performRequest("/password-reset?pswResetToken=" + token, "POST", { new_password });
 }
 
 export async function ChangePassword(old_password: string, new_password: string) {
-    return await performRequest("/password", "PUT", {old_password, new_password});
+    return await performRequest("/password", "PUT", { old_password, new_password });
 }
 
 export async function Login(user: LoginDTO) {
@@ -72,8 +72,8 @@ export async function UpdateDoctorEducation(update: DoctorEducationUpdateDTO) {
     return await performRequest("/doctors/update/education", "PUT", update);
 }
 
-export async function FetchAllDoctors(term: string, skip: number, limit: number) {
-    return await performRequest(`/doctors?term=${term}&skip=${skip}&limit=${limit}`, "GET");
+export async function FetchAllDoctors(term: string, profession_id: string, skip: number, limit: number) {
+    return await performRequest(`/doctors?term=${term}&profession_id=${profession_id}&skip=${skip}&limit=${limit}`, "GET");
 }
 
 export async function FetchDoctorById(doctor_id: string) {
@@ -94,7 +94,7 @@ export async function UploadComment(doctorId: string, comment: CommentReqDTO) {
 }
 
 export async function LikeOrDislikeComment(commentId: string, like_status: number) {
-    return await performRequest(`/comments/${commentId}/like`, "PUT", {like_status});
+    return await performRequest(`/comments/${commentId}/like`, "PUT", { like_status });
 }
 
 // PROFESSIONS
@@ -103,7 +103,7 @@ export async function FetchAllProfessions() {
 }
 
 export async function CreateProfession(name: string) {
-    return await performRequest("/professions", "POST", {name});
+    return await performRequest("/professions", "POST", { name });
 }
 
 // HOSPITALS
@@ -112,7 +112,7 @@ export async function FetchAllHospitals() {
 }
 
 export async function CreateHospital(name: string) {
-    return await performRequest("/hospitals", "POST", {name});
+    return await performRequest("/hospitals", "POST", { name });
 }
 
 export async function UploadHospitalAvatar(hospitalId: string, data: FormData, handleUploadProgress: (e: any) => void) {

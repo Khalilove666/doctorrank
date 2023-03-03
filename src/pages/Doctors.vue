@@ -13,30 +13,13 @@
                 ></v-text-field>
             </div>
             <div class="v-col-12 v-col-sm-6">
-                <v-autocomplete
-                    v-model="selectedProfessions"
-                    :items="professions"
-                    density="compact"
-                    chips
-                    small-chips
-                    label="İxtisas"
-                    clearable
-                    variant="outlined"
-                    color="accent"
-                    hide-details
-                ></v-autocomplete>
+                <Autocomplete v-model="selectedProfession" :items="professions" />
             </div>
         </div>
-        <v-progress-linear
-            :active="loading"
-            indeterminate
-            rounded
-            color="accent"
-            class="mt-4"
-        ></v-progress-linear>
+        <v-progress-linear :active="loading" indeterminate rounded color="accent" class="mt-4"></v-progress-linear>
         <v-row v-if="!nothingFound" class="mt-4">
-            <v-col cols="12" sm="6" md="3" v-for="doctor in doctors" :key="doctor._id">
-                <DoctorCard :doctor="doctor"/>
+            <v-col v-for="doctor in doctors" :key="doctor._id" cols="12" sm="6" md="3">
+                <DoctorCard :doctor="doctor" />
             </v-col>
         </v-row>
         <div v-else class="nothing-found">
@@ -49,18 +32,19 @@
 </template>
 
 <script setup lang="ts">
-import {onMounted, ref} from "vue";
-import {debounce} from "ts-debounce";
-import {useScreen} from "../composables/screen";
-import {FetchAllDoctors, FetchAllProfessions} from "../api";
-import {CompactDoctor, Profession} from "../dtos";
+import { onMounted, ref, watch } from "vue";
+import { debounce } from "ts-debounce";
+import { useScreen } from "../composables/screen";
+import { FetchAllDoctors, FetchAllProfessions } from "../api";
+import { CompactDoctor, Profession } from "../dtos";
 import DoctorCard from "../components/DoctorCard.vue";
+import Autocomplete from "../components/Autocomplete.vue";
 
 const screen = useScreen();
 const searchDoctors = debounce(searchByTerm, 600);
 
 const professions = ref<Profession[]>([]);
-const selectedProfessions = ref<Array<Profession>>([]);
+const selectedProfession = ref<Profession | null>(null);
 const doctors = ref<Array<CompactDoctor>>([]);
 
 const term = ref("");
@@ -68,6 +52,12 @@ const skip = ref(0);
 const loading = ref(true);
 const nothingFound = ref(false);
 const haveMore = ref(true);
+
+watch(selectedProfession, async () => {
+    skip.value = 0;
+    haveMore.value = true;
+    await fetchAllDoctors();
+});
 
 onMounted(async () => {
     await fetchProfessions();
@@ -77,7 +67,7 @@ onMounted(async () => {
             skip.value += 24;
             await fetchAllDoctors();
         }
-    })
+    });
 });
 
 async function searchByTerm(event: any) {
@@ -93,8 +83,9 @@ async function fetchProfessions() {
 }
 
 async function fetchAllDoctors() {
+    const professionId = selectedProfession.value?._id || "";
     loading.value = true;
-    const res = await FetchAllDoctors(term.value, skip.value, 24);
+    const res = await FetchAllDoctors(term.value, professionId, skip.value, 24);
     loading.value = false;
     if (res.ok) {
         if (!res.data) {
@@ -111,8 +102,6 @@ async function fetchAllDoctors() {
         }
     }
 }
-
-
 </script>
 
 <style scoped lang="scss">

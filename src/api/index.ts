@@ -25,7 +25,7 @@ import {
     FetchAllHospitals,
     CreateHospital,
     UploadHospitalAvatar,
-} from './endpoints'
+} from "./endpoints";
 
 export {
     Register,
