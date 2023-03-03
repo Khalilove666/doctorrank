@@ -3,7 +3,7 @@
         <div class="d-flex justify-space-between">
             <div class="d-flex align-center">
                 <v-rating
-                    v-model="comment.rate"
+                    :model-value="comment.rate"
                     half-increments
                     readonly
                     color="accent"
@@ -19,25 +19,25 @@
                 size="small"
                 variant="text"
                 icon="mdi-thumb-up"
-                :color="currentUserLike === 1? 'accent': ''"
+                :color="currentUserLike === 1 ? 'accent' : ''"
                 @click="handleCommentLike(1)"
             ></v-btn>
-            <p>{{ comment.likes.filter(like => like.status).length }}</p>
+            <p>{{ comment.likes.filter((like) => like.status).length }}</p>
             <v-btn
                 size="small"
                 variant="text"
                 icon="mdi-thumb-down"
-                :color="currentUserLike === -1 ? 'accent': ''"
+                :color="currentUserLike === -1 ? 'accent' : ''"
                 @click="handleCommentLike(-1)"
             ></v-btn>
-            <p>{{ comment.likes.filter(like => !like.status).length }}</p>
+            <p>{{ comment.likes.filter((like) => !like.status).length }}</p>
         </div>
     </div>
     <div class="v-row">
         <div class="v-col-12 v-col-md-2">
             <v-list-item
-                class="pl-0"
                 v-ripple
+                class="pl-0"
                 :prepend-avatar="comment.user.img || avatarPlaceHolder"
                 :title="comment.user.first_name + ' ' + comment.user.last_name"
                 :subtitle="comment.user.username"
@@ -51,25 +51,25 @@
 </template>
 
 <script setup lang="ts">
-import {computed} from "vue";
+import { computed } from "vue";
 import moment from "moment";
-import {useUser} from "../store/user";
-import {useComments} from "../store/comments";
-import {Comment} from "../dtos";
-import {LikeOrDislikeComment} from "../api";
+import { useUser } from "../store/user";
+import { useComments } from "../store/comments";
+import { Comment } from "../dtos";
+import { LikeOrDislikeComment } from "../api";
 import avatarPlaceHolder from "../assets/img/avatar.png";
 
 const userStore = useUser();
 const commentStore = useComments();
 
-const props = defineProps<{ comment: Comment }>()
+const props = defineProps<{ comment: Comment }>();
 
 const currentUserLike = computed(() => {
-    const obj = props.comment.likes.find(like => like.user_id === userStore.user._id);
+    const obj = props.comment.likes.find((like) => like.user_id === userStore.user._id);
     if (!obj) return 0;
     else if (obj.status) return 1;
     else return -1;
-})
+});
 
 async function handleCommentLike(status: number) {
     let likeStatus = 0;
@@ -83,8 +83,6 @@ async function handleCommentLike(status: number) {
     const res = await LikeOrDislikeComment(props.comment._id, likeStatus);
     if (res.ok) commentStore.updateLikeStatus(userStore.user._id, props.comment._id, likeStatus);
 }
-
 </script>
 
-<style scoped lang="scss">
-</style>
+<style scoped lang="scss"></style>

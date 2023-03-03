@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
 import { computed, ref } from "vue";
-import { User } from "../dtos";
+import { User } from "@/dtos";
 
 export const useUser = defineStore("user", () => {
     const defaultUser: User = {

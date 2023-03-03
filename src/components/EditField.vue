@@ -2,8 +2,10 @@
     <div>
         <div v-if="!editing">
             <div class="d-flex justify-space-between">
-                <p><b>{{ label }}:</b> {{ textarea ? "" : modelValue }}</p>
-                <button @click="handleStartEdit()" class="btn-text">Edit</button>
+                <p>
+                    <b>{{ label }}:</b> {{ textarea ? "" : modelValue }}
+                </p>
+                <button class="btn-text" @click="handleStartEdit()">Edit</button>
             </div>
             <p v-if="textarea">{{ modelValue }}</p>
         </div>
@@ -11,22 +13,22 @@
             <v-textarea
                 v-if="textarea"
                 :model-value="modelValue"
-                @input="handleInput($event)"
                 :label="label"
                 hide-details="auto"
+                @input="handleInput($event)"
             ></v-textarea>
             <v-text-field
                 v-else
                 :model-value="modelValue"
-                @input="handleInput($event)"
                 :label="label"
                 variant="outlined"
                 density="compact"
                 hide-details="auto"
+                @input="handleInput($event)"
             ></v-text-field>
             <div class="d-flex justify-end mt-2">
-                <v-btn @click="handleCancel()" color="accent" variant="outlined">cancel</v-btn>
-                <v-btn @click="handleSave()" color="accent" class="ms-2">save</v-btn>
+                <v-btn color="accent" variant="outlined" @click="handleCancel()">cancel</v-btn>
+                <v-btn color="accent" class="ms-2" @click="handleSave()">save</v-btn>
             </div>
         </div>
         <v-divider></v-divider>
@@ -34,14 +36,14 @@
 </template>
 
 <script setup lang="ts">
-import {ref} from "vue";
+import { ref } from "vue";
 
-const emit = defineEmits(["update:modelValue", "save"])
+const emit = defineEmits(["update:modelValue", "save"]);
 const props = defineProps({
-    label: {type: String, required: true},
-    textarea: {type: Boolean, required: false, default: false},
-    modelValue: {type: String, required: true, default: ""},
-})
+    label: { type: String, required: true },
+    textarea: { type: Boolean, required: false, default: false },
+    modelValue: { type: String, required: true, default: "" },
+});
 const editing = ref(false);
 let initialVal = "";
 
@@ -66,6 +68,4 @@ async function handleSave() {
 }
 </script>
 
-<style scoped lang="scss">
-
-</style>
+<style scoped lang="scss"></style>

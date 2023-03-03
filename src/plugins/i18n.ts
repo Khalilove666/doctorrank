@@ -1,6 +1,6 @@
-import {createI18n} from "vue-i18n";
+import { createI18n } from "vue-i18n";
 export const i18n = createI18n({
-    locale: 'az',
+    locale: "az",
     allowComposition: true,
     messages: {
         gb: {
@@ -59,7 +59,6 @@ export const i18n = createI18n({
             select_username: "Выберите имя пользователя",
             password: "Пароль",
             confirm_password: "пароль повторить",
-        }
-    }
-
-})
+        },
+    },
+});

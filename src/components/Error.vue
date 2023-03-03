@@ -6,12 +6,9 @@
 </template>
 
 <script setup lang="ts">
-
-const props = defineProps({
-    text: {type: String, required: true},
-})
+defineProps({
+    text: { type: String, required: true },
+});
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>

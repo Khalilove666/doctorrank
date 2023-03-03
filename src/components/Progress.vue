@@ -5,7 +5,7 @@
 </template>
 
 <script setup lang="ts">
-import {onBeforeUnmount, onMounted} from "vue";
+import { onBeforeUnmount, onMounted } from "vue";
 
 onMounted(() => {
     document.documentElement.style.overflow = "clip";
@@ -14,7 +14,6 @@ onMounted(() => {
 onBeforeUnmount(() => {
     document.documentElement.style.overflow = "scroll";
 });
-
 </script>
 
 <style scoped lang="scss">

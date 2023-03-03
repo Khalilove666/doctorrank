@@ -1,13 +1,5 @@
-import {
-    CompactDoctor,
-    Doctor,
-    Experience,
-    Education,
-    Profession,
-    Hospital,
-    Comment,
-    User,
-} from "./resDto";
+import { ProfileDialog } from "./enums";
+import { CompactDoctor, Doctor, Experience, Education, Profession, Hospital, Comment, User } from "./resDto";
 
 import {
     RegisterDTO,
@@ -17,7 +9,7 @@ import {
     DoctorExperienceUpdateDTO,
     DoctorEducationUpdateDTO,
     DoctorDTO,
-    CommentReqDTO
+    CommentReqDTO,
 } from "./reqDto";
 
 export type {
@@ -36,5 +28,7 @@ export type {
     DoctorExperienceUpdateDTO,
     DoctorEducationUpdateDTO,
     DoctorDTO,
-    CommentReqDTO
+    CommentReqDTO,
 };
+
+export { ProfileDialog };
