@@ -1,7 +1,7 @@
 <template>
     <div>
         <v-app-bar density="compact" color="primary" priority="0">
-            <div class="full-width d-flex align-center">
+            <div class="full-width d-flex align-center px-4">
                 <v-row>
                     <v-col v-if="mobile" cols="3">
                         <div class="d-flex align-center full-height">

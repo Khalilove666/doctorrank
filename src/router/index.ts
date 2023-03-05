@@ -1,15 +1,5 @@
 import { createRouter, createWebHistory } from "vue-router";
-
 import Home from "../pages/Home.vue";
-import Login from "../pages/Login.vue";
-import Register from "../pages/Register.vue";
-import Profile from "../pages/Profile.vue";
-import Doctors from "../pages/Doctors.vue";
-import DoctorPage from "../pages/DoctorPage.vue";
-import About from "../pages/About.vue";
-import ProfileActivation from "../pages/ProfileActivation.vue";
-import ForgotPassword from "../pages/ForgotPassword.vue";
-import ResetPassword from "../pages/ResetPassword.vue";
 import { useUser } from "../store/user";
 
 const routes = [
@@ -17,51 +7,83 @@ const routes = [
         path: "/",
         name: "home",
         component: Home,
+        meta: {
+            requireAuth: false,
+        },
     },
     {
         path: "/about",
         name: "about",
-        component: About,
+        component: () => import("@/pages/About.vue"),
+        meta: {
+            requireAuth: false,
+        },
     },
     {
         path: "/login",
         name: "login",
-        component: Login,
+        component: () => import("@/pages/Login.vue"),
+        meta: {
+            requireAuth: false,
+            requireNotAuth: true,
+        },
     },
     {
         path: "/register",
         name: "register",
-        component: Register,
+        component: () => import("@/pages/Register.vue"),
+        meta: {
+            requireAuth: false,
+            requireNotAuth: true,
+        },
     },
     {
         path: "/activation",
         name: "activation",
-        component: ProfileActivation,
+        component: () => import("@/pages/ProfileActivation.vue"),
+        meta: {
+            requireAuth: false,
+            requireNotAuth: true,
+        },
     },
     {
         path: "/forgot-password",
         name: "forgotPassword",
-        component: ForgotPassword,
+        component: () => import("@/pages/ForgotPassword.vue"),
+        meta: {
+            requireAuth: false,
+            requireNotAuth: true,
+        },
     },
     {
         path: "/reset-password",
         name: "resetPassword",
-        component: ResetPassword,
+        component: () => import("@/pages/ResetPassword.vue"),
+        meta: {
+            requireAuth: false,
+            requireNotAuth: true,
+        },
     },
     {
         path: "/profile",
         name: "profile",
-        component: Profile,
+        component: () => import("@/pages/Profile.vue"),
+        meta: {
+            requireAuth: false,
+        },
     },
     {
         path: "/doctors",
         name: "doctors",
-        component: Doctors,
+        component: () => import("@/pages/Doctors.vue"),
     },
     {
         path: "/doctors/:doctorId",
         name: "doctor",
-        component: DoctorPage,
+        component: () => import("@/pages/DoctorPage.vue"),
+        meta: {
+            requireAuth: false,
+        },
     },
 ];
 
@@ -72,12 +94,9 @@ export const router = createRouter({
 
 router.beforeEach((to) => {
     const user = useUser();
-    if (
-        (to.name == "login" || to.name == "register" || to.name == "forgotPassword" || to.name == "resetPassword") &&
-        user.loggedIn
-    ) {
+    if (to.meta.requireNotAuth && user.loggedIn) {
         return { name: "home" };
-    } else if (to.name == "profile" && !user.loggedIn) {
+    } else if (to.meta.requireAuth && !user.loggedIn) {
         return { name: "login" };
     }
 });

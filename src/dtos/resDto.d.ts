@@ -26,7 +26,7 @@ export interface CompactDoctor {
     profession: {
         id: string;
         name: string;
-    };
+    } | null;
     hospital: {
         id: string;
         name: string;

@@ -13,7 +13,21 @@
                 ></v-text-field>
             </div>
             <div class="v-col-12 v-col-sm-6">
-                <Autocomplete v-model="selectedProfession" :items="professions" />
+                <v-autocomplete
+                    v-model="selectedProfession"
+                    :items="professions"
+                    density="compact"
+                    hide-no-data
+                    hide-details
+                    variant="outlined"
+                    label="Professions"
+                    clearable
+                    color="accent"
+                    no-data-text="No professions"
+                    item-title="name"
+                    item-value="_id"
+                >
+                </v-autocomplete>
             </div>
         </div>
         <v-progress-linear :active="loading" indeterminate rounded color="accent" class="mt-4"></v-progress-linear>
@@ -38,13 +52,13 @@ import { useScreen } from "../composables/screen";
 import { FetchAllDoctors, FetchAllProfessions } from "../api";
 import { CompactDoctor, Profession } from "../dtos";
 import DoctorCard from "../components/DoctorCard.vue";
-import Autocomplete from "../components/Autocomplete.vue";
+// import Autocomplete from "../components/Autocomplete.vue";
 
 const screen = useScreen();
 const searchDoctors = debounce(searchByTerm, 600);
 
-const professions = ref<Profession[]>([]);
-const selectedProfession = ref<Profession | null>(null);
+const professions = ref<Array<Profession>>([]);
+const selectedProfession = ref<string | null>(null);
 const doctors = ref<Array<CompactDoctor>>([]);
 
 const term = ref("");
@@ -54,6 +68,8 @@ const nothingFound = ref(false);
 const haveMore = ref(true);
 
 watch(selectedProfession, async () => {
+    console.log(selectedProfession.value);
+
     skip.value = 0;
     haveMore.value = true;
     await fetchAllDoctors();
@@ -79,11 +95,11 @@ async function searchByTerm(event: any) {
 
 async function fetchProfessions() {
     const res = await FetchAllProfessions();
-    if (res.ok) professions.value = res.data;
+    if (res.ok && res.data) professions.value = res.data;
 }
 
 async function fetchAllDoctors() {
-    const professionId = selectedProfession.value?._id || "";
+    const professionId = selectedProfession.value || "";
     loading.value = true;
     const res = await FetchAllDoctors(term.value, professionId, skip.value, 24);
     loading.value = false;
