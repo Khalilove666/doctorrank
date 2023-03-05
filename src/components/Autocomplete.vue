@@ -2,7 +2,7 @@
     <div class="autocomplete d-flex flex-column flex-grow-1">
         <div class="field">
             <div v-if="selectedIndex !== null" class="field__selected-chip">
-                <img v-if="items[selectedIndex].img" class="field__selected-chip__img" src="src/assets/img/avatar.png" alt="" />
+                <!-- <img v-if="items[selectedIndex].img" class="field__selected-chip__img" src="src/assets/img/avatar.png" alt="" /> -->
                 <span class="field__selected-chip__text">{{ items[selectedIndex].name }}</span>
             </div>
             <input
@@ -41,7 +41,7 @@
                     }"
                     @click="handleItemClicked(item.index)"
                 >
-                    <img v-if="item.data.img" class="dropdown__item__img" src="src/assets/img/avatar.png" alt="" />
+                    <!-- <img v-if="item.data.img" class="dropdown__item__img" src="src/assets/img/avatar.png" alt="" /> -->
                     <span>{{ item.data.name }}</span>
                 </div>
             </template>

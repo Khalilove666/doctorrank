@@ -167,7 +167,7 @@
                         <div v-else class="mt-2 d-flex justify-space-between">
                             <v-chip color="pink" label text-color="white">
                                 <v-icon start icon="mdi-label"></v-icon>
-                                {{ doctor.profession.name }}
+                                {{ doctor.profession?.name }}
                             </v-chip>
                             <button class="btn-text" @click="handleProfessionEdit()">Edit</button>
                         </div>
@@ -188,9 +188,9 @@
                         <div v-else class="mt-2 d-flex justify-space-between">
                             <v-chip v-ripple color="accent" variant="outlined">
                                 <v-avatar left>
-                                    <v-img :src="doctor.hospital.img"></v-img>
+                                    <v-img :src="doctor.hospital?.img"></v-img>
                                 </v-avatar>
-                                {{ doctor.hospital.name }}
+                                {{ doctor.hospital?.name }}
                             </v-chip>
                             <button class="btn-text" @click="handleHospitalEdit()">Edit</button>
                         </div>

@@ -1,21 +1,21 @@
 <template>
     <router-link class="text-decoration-none" :to="'/doctors/' + props.doctor._id" target="_blank">
         <v-card class="mx-auto cursor-pointer" rounded>
-            <v-img :src="props.doctor.img" cover height="400"></v-img>
+            <v-img :src="image.doctorAvatar(props.doctor.img)" cover height="400"></v-img>
             <v-card-title>
                 {{ props.doctor.title + " " + props.doctor.first_name + " " + props.doctor.last_name }}
             </v-card-title>
             <v-card-actions>
                 <v-chip color="pink" label text-color="white">
                     <v-icon start icon="mdi-label"></v-icon>
-                    {{ props.doctor.profession.name }}
+                    {{ props.doctor.profession?.name }}
                 </v-chip>
                 <v-spacer></v-spacer>
                 <v-chip v-ripple color="accent" variant="outlined">
                     <v-avatar left>
-                        <v-img :src="props.doctor.hospital.img"></v-img>
+                        <v-img :src="props.doctor.hospital?.img"></v-img>
                     </v-avatar>
-                    {{ props.doctor.hospital.name }}
+                    {{ props.doctor.hospital?.name }}
                 </v-chip>
             </v-card-actions>
         </v-card>
@@ -24,6 +24,7 @@
 
 <script setup lang="ts">
 // import {ref} from "vue";
+import { useImage } from "@/composables/image";
 import { CompactDoctor } from "@/dtos";
 // import {useRouter} from "vue-router";
 
@@ -32,7 +33,7 @@ interface Obj {
 }
 
 // const router = useRouter();
-
+const image = useImage();
 const props = defineProps<Obj>();
 
 // function goToDoctorPage() {

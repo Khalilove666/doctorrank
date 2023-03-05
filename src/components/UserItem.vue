@@ -1,9 +1,11 @@
 <template>
-    <v-list-item v-ripple class="d-flex">
-        <img :src="img" alt="avatar" class="prevent-user-select user-img" />
-        <div>
-            <p class="v-list-item-title">{{ fullName }}</p>
-            <p class="v-list-item-subtitle">{{ username }}</p>
+    <v-list-item v-ripple>
+        <div class="d-flex">
+            <img :src="img" alt="avatar" class="prevent-user-select user-img" />
+            <div>
+                <p class="v-list-item-title">{{ fullName }}</p>
+                <p class="v-list-item-subtitle">{{ username }}</p>
+            </div>
         </div>
     </v-list-item>
 </template>
